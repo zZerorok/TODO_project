@@ -14,7 +14,14 @@ public class Member {
     }
 
     public Member(String name) {
+        validateName(name);
         this.name = name;
+    }
+
+    private void validateName(String name) {
+        if (name == null || name.isBlank() || name.length() > 10) {
+            throw new IllegalArgumentException("사용자의 이름은 1글자 이상 10글자 이하입니다.");
+        }
     }
 
     public Long getId() {
