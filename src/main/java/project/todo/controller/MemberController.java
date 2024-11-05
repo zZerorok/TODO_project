@@ -4,8 +4,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import project.todo.model.Member;
-import project.todo.model.MemberService;
+import project.todo.model.member.Member;
+import project.todo.service.MemberService;
 
 @Controller
 public class MemberController {

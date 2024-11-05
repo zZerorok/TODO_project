@@ -1,7 +1,8 @@
-package project.todo.model;
+package project.todo.service;
 
 import org.springframework.stereotype.Service;
-import project.todo.model.repository.MemberRepository;
+import project.todo.model.member.Member;
+import project.todo.model.member.MemberRepository;
 
 @Service
 public class MemberService {
