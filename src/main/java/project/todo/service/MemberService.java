@@ -2,6 +2,7 @@ package project.todo.service;
 
 import org.springframework.stereotype.Service;
 import project.todo.model.member.Member;
+import project.todo.model.member.MemberCreateRequest;
 import project.todo.model.member.MemberRepository;
 
 @Service
@@ -12,7 +13,9 @@ public class MemberService {
         this.memberRepository = memberRepository;
     }
 
-    public void save(Member member) {
+    public Member save(MemberCreateRequest request) {
+        Member member = new Member(request.name());
         memberRepository.save(member);
+        return member;
     }
 }

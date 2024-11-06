@@ -4,7 +4,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import project.todo.model.member.Member;
+import project.todo.model.member.MemberCreateRequest;
 import project.todo.service.MemberService;
 
 @Controller
@@ -16,15 +18,14 @@ public class MemberController {
     }
 
     @GetMapping("/hello")
-    public String hello() {
+    public String hello(@RequestParam String name, Model model) {
+        model.addAttribute("name", name);
         return "hello";
     }
 
     @PostMapping("/hello")
-    public String save(String memberName, Model model) {
-        Member member = new Member(memberName);
-        memberService.save(member);
-        model.addAttribute("member", member);
-        return "hello";
+    public String save(MemberCreateRequest request) {
+        Member savedMember = memberService.save(request);
+        return "redirect:/hello?name=" + savedMember.getName();
     }
 }
