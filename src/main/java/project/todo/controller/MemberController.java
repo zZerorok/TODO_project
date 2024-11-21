@@ -16,7 +16,7 @@ public class MemberController {
         this.memberService = memberService;
     }
 
-    @GetMapping("/save")
+    @GetMapping("/hello")
     public String hello(@RequestParam String name, Model model) {
         model.addAttribute("name", name);
         return "hello";
@@ -25,6 +25,6 @@ public class MemberController {
     @PostMapping("/save")
     public String save(@ModelAttribute MemberCreateRequest request) {
         Member savedMember = memberService.save(request);
-        return "redirect:/member/save?name=" + savedMember.getName();
+        return "redirect:/member/hello?name=" + savedMember.getName();
     }
 }
