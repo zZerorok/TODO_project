@@ -5,7 +5,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import project.todo.model.todo.TodoCreateRequest;
+import project.todo.model.todo.TodoResponse;
 import project.todo.service.TodoService;
+
+import java.util.List;
 
 @RequestMapping("/todo")
 @Controller
@@ -14,6 +17,11 @@ public class TodoController {
 
     public TodoController(TodoService todoService) {
         this.todoService = todoService;
+    }
+
+    @GetMapping("/{memberId}")
+    public List<TodoResponse> findAll(@PathVariable Long memberId) {
+        return todoService.findAll(memberId);
     }
 
     @PostMapping("/create")

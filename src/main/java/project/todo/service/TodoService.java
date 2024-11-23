@@ -7,6 +7,9 @@ import project.todo.model.member.MemberRepository;
 import project.todo.model.todo.Todo;
 import project.todo.model.todo.TodoCreateRequest;
 import project.todo.model.todo.TodoRepository;
+import project.todo.model.todo.TodoResponse;
+
+import java.util.List;
 
 @Service
 public class TodoService {
@@ -16,6 +19,21 @@ public class TodoService {
     public TodoService(TodoRepository todoRepository, MemberRepository memberRepository) {
         this.todoRepository = todoRepository;
         this.memberRepository = memberRepository;
+    }
+
+    public List<TodoResponse> findAll(Long memberId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new EntityNotFoundException("Member not found"));
+
+        List<Todo> todos = todoRepository.findAllByMemberId(member.getId());
+
+        if (todos.isEmpty()) {
+            throw new EntityNotFoundException("작성하신 Todo가 없습니다.");
+        }
+
+        return todos.stream()
+                .map(TodoResponse::from)
+                .toList();
     }
 
     public void create(TodoCreateRequest request) {

@@ -40,4 +40,24 @@ public class Todo {
     public Long getId() {
         return id;
     }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public LocalDate getDeadline() {
+        return deadline;
+    }
+
+    public boolean isCompleted() {
+        return isCompleted;
+    }
+
+    public LocalDateTime getCompletedAt() {
+        return completedAt;
+    }
 }
