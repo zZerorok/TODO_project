@@ -3,9 +3,7 @@ package project.todo.controller;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import project.todo.model.todo.TodoCreateRequest;
 import project.todo.service.TodoService;
 
@@ -22,5 +20,10 @@ public class TodoController {
     public ResponseEntity<Void> create(@RequestBody TodoCreateRequest request) {
         todoService.create(request);
         return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @DeleteMapping("/delete/{todoId}")
+    public void delete(@PathVariable Long todoId) {
+        todoService.delete(todoId);
     }
 }
