@@ -36,4 +36,8 @@ public class Todo {
         this.deadline = deadline;
         this.isCompleted = false;
     }
+
+    public Long getId() {
+        return id;
+    }
 }
