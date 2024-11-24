@@ -10,7 +10,7 @@ import project.todo.service.TodoService;
 
 import java.util.List;
 
-@RequestMapping("/todo")
+@RequestMapping("/todos")
 @Controller
 public class TodoController {
     private final TodoService todoService;
@@ -30,7 +30,7 @@ public class TodoController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @DeleteMapping("/delete/{todoId}")
+    @DeleteMapping("/{todoId}/delete")
     public void delete(@PathVariable Long todoId) {
         todoService.delete(todoId);
     }

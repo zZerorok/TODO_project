@@ -7,7 +7,7 @@ import project.todo.model.member.Member;
 import project.todo.model.member.MemberCreateRequest;
 import project.todo.service.MemberService;
 
-@RequestMapping("/member")
+@RequestMapping("/members")
 @Controller
 public class MemberController {
     private final MemberService memberService;
