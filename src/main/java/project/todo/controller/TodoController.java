@@ -6,6 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import project.todo.model.todo.TodoCreateRequest;
 import project.todo.model.todo.TodoResponse;
+import project.todo.model.todo.TodoUpdateRequest;
 import project.todo.service.TodoService;
 
 import java.util.List;
@@ -28,6 +29,13 @@ public class TodoController {
     public ResponseEntity<Void> create(@RequestBody TodoCreateRequest request) {
         todoService.create(request);
         return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @PutMapping("/{todoId}/update")
+    public ResponseEntity<Void> update(@PathVariable Long todoId,
+                                       @RequestBody TodoUpdateRequest request) {
+        todoService.update(todoId, request);
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     @DeleteMapping("/{todoId}/delete")

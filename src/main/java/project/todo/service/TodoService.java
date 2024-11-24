@@ -4,10 +4,7 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import project.todo.model.member.Member;
 import project.todo.model.member.MemberRepository;
-import project.todo.model.todo.Todo;
-import project.todo.model.todo.TodoCreateRequest;
-import project.todo.model.todo.TodoRepository;
-import project.todo.model.todo.TodoResponse;
+import project.todo.model.todo.*;
 
 import java.util.List;
 
@@ -43,6 +40,15 @@ public class TodoService {
                 request.title(),
                 request.deadLine()
         );
+
+        todoRepository.save(todo);
+    }
+
+    public void update(Long todoId, TodoUpdateRequest request) {
+        Todo todo = todoRepository.findById(todoId)
+                .orElseThrow(() -> new EntityNotFoundException("Todo not found with id: " + todoId));
+
+        todo.updateFromRequest(request);
 
         todoRepository.save(todo);
     }
