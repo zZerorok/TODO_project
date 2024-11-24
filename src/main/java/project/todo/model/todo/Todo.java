@@ -37,6 +37,11 @@ public class Todo {
         this.isCompleted = false;
     }
 
+    public void updateFromRequest(TodoUpdateRequest request) {
+        this.title = request.title();
+        this.deadline = request.deadline();
+    }
+
     public Long getId() {
         return id;
     }
