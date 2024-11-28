@@ -1,6 +1,7 @@
-package project.todo.model.todo;
+package project.todo.model.todo.task;
 
 import jakarta.persistence.*;
+import project.todo.model.todo.Todo;
 
 import java.time.LocalDateTime;
 
@@ -31,5 +32,29 @@ public class Task {
         this.content = content;
         this.createdAt = createdAt;
         this.isCompleted = false;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public Todo getTodo() {
+        return todo;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public boolean isCompleted() {
+        return isCompleted;
+    }
+
+    public LocalDateTime getCompletedAt() {
+        return completedAt;
     }
 }
