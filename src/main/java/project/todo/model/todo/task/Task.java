@@ -34,6 +34,11 @@ public class Task {
         this.isCompleted = false;
     }
 
+    public void completeTask() {
+        this.isCompleted = true;
+        this.completedAt = LocalDateTime.now();
+    }
+
     public Long getId() {
         return id;
     }
