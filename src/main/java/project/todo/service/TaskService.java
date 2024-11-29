@@ -4,7 +4,10 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import project.todo.model.todo.Todo;
 import project.todo.model.todo.TodoRepository;
-import project.todo.model.todo.task.*;
+import project.todo.model.todo.task.Task;
+import project.todo.model.todo.task.TaskAddRequest;
+import project.todo.model.todo.task.TaskRepository;
+import project.todo.model.todo.task.TaskResponse;
 
 import java.util.List;
 
@@ -43,6 +46,15 @@ public class TaskService {
         return tasks.stream()
                 .map(TaskResponse::from)
                 .toList();
+    }
+
+    public void completeTask(Long taskId) {
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new EntityNotFoundException("해당 Task를 찾을 수 없습니다."));
+
+        task.completeTask();
+
+        taskRepository.save(task);
     }
 
     public void delete(Long taskId) {

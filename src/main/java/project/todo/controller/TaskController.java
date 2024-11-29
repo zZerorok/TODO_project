@@ -30,6 +30,12 @@ public class TaskController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
+    @PutMapping("/{taskId}/complete")
+    public ResponseEntity<Void> completeTask(@PathVariable Long taskId) {
+        taskService.completeTask(taskId);
+        return ResponseEntity.noContent().build();
+    }
+
     @DeleteMapping("/{taskId}")
     public ResponseEntity<Void> delete(@PathVariable Long taskId) {
         taskService.delete(taskId);
