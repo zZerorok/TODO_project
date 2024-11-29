@@ -21,18 +21,6 @@ public class TaskService {
         this.todoRepository = todoRepository;
     }
 
-    public void add(Long todoId, TaskAddRequest request) {
-        Todo todo = todoRepository.findById(todoId)
-                .orElseThrow(() -> new EntityNotFoundException("해당 Todo를 찾을 수 없습니다."));
-
-        Task task = new Task(
-                todo,
-                request.content()
-        );
-
-        taskRepository.save(task);
-    }
-
     public List<TaskResponse> findTasks(Long todoId) {
         Todo todo = todoRepository.findById(todoId)
                 .orElseThrow(() -> new EntityNotFoundException("해당 Todo를 찾을 수 없습니다."));
@@ -46,6 +34,18 @@ public class TaskService {
         return tasks.stream()
                 .map(TaskResponse::from)
                 .toList();
+    }
+
+    public void add(Long todoId, TaskAddRequest request) {
+        Todo todo = todoRepository.findById(todoId)
+                .orElseThrow(() -> new EntityNotFoundException("해당 Todo를 찾을 수 없습니다."));
+
+        Task task = new Task(
+                todo,
+                request.content()
+        );
+
+        taskRepository.save(task);
     }
 
     public void completeTask(Long taskId) {
