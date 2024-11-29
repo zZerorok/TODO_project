@@ -17,6 +17,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 
 @Transactional
 @SpringBootTest
@@ -42,7 +43,7 @@ class TaskServiceTest {
         Todo todo = new Todo(
                 member,
                 "프로젝트",
-                LocalDate.of(2024,12,1)
+                LocalDate.of(2024, 12, 1)
         );
         todoRepository.save(todo);
 
@@ -86,5 +87,19 @@ class TaskServiceTest {
 
         assertThat(taskRepository.findById(taskId)).isEmpty();
         assertThat(taskRepository.findAll()).hasSize(2);
+    }
+
+    @Test
+    void completeTaskTest() {
+        Task task = taskRepository.findAll().get(0);
+        Long taskId = task.getId();
+        assertNull(task.getCompletedAt());
+        assertFalse(task.isCompleted());
+
+        taskService.completeTask(taskId);
+
+        Task completedTask = taskRepository.findById(taskId).orElseThrow();
+        assertNotNull(completedTask.getCompletedAt());
+        assertTrue(completedTask.isCompleted());
     }
 }
