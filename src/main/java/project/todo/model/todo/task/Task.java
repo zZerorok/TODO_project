@@ -1,8 +1,10 @@
 package project.todo.model.todo.task;
 
 import jakarta.persistence.*;
+import project.todo.exception.todo.DeadlineExceededException;
 import project.todo.model.todo.Todo;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -28,10 +30,22 @@ public class Task {
     }
 
     public Task(Todo todo, String content, LocalDateTime createdAt) {
+        validateDeadline(todo, createdAt);
+
         this.todo = todo;
         this.content = content;
         this.createdAt = createdAt;
         this.isCompleted = false;
+    }
+
+    private static void validateDeadline(Todo todo, LocalDateTime createdAt) {
+        LocalDate deadline = todo.getDeadline();
+        LocalDate createdDate = createdAt.toLocalDate();
+
+        if (deadline.equals(createdDate) || createdDate.isAfter(deadline)) {
+            throw new DeadlineExceededException(
+                    String.format("마감일(%s)을 초과할 수 없습니다.", deadline));
+        }
     }
 
     public void completeTask() {
