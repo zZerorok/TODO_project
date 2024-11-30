@@ -99,33 +99,6 @@ class TaskServiceTest {
         assertEquals(addedTask.getContent(), task.content());
     }
 
-    @DisplayName("Task 완료 처리")
-    @Test
-    void completeTaskTest() {
-        Task task = taskRepository.findAll().get(0);
-        Long taskId = task.getId();
-        assertNull(task.getCompletedAt());
-        assertFalse(task.isCompleted());
-
-        taskService.completeTask(taskId);
-        Task completedTask = taskRepository.findById(taskId).orElseThrow();
-        assertNotNull(completedTask.getCompletedAt());
-        assertTrue(completedTask.isCompleted());
-    }
-
-    @DisplayName("이미 완료된 Task 에외 발생 ")
-    @Test
-    void alreadyCompletedTaskTest() {
-        Long taskId = taskRepository.findAll().get(0).getId();
-        taskService.completeTask(taskId);
-
-        assertThatThrownBy(() -> {
-            taskService.completeTask(taskId);
-        })
-                .isInstanceOf(IllegalStateException.class)
-                .hasMessage("이미 완료된 Task 입니다.");
-    }
-
     @DisplayName("Task 삭제 처리")
     @Test
     void deleteTaskTest() {

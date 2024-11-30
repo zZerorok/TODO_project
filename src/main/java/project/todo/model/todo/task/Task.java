@@ -38,7 +38,7 @@ public class Task {
         this.isCompleted = false;
     }
 
-    private static void validateDeadline(Todo todo, LocalDateTime createdAt) {
+    private void validateDeadline(Todo todo, LocalDateTime createdAt) {
         LocalDate deadline = todo.getDeadline();
         LocalDate createdDate = createdAt.toLocalDate();
 
@@ -49,6 +49,10 @@ public class Task {
     }
 
     public void completeTask() {
+        if (isCompleted()) {
+            throw new IllegalStateException("이미 완료된 Task 입니다.");
+        }
+
         this.isCompleted = true;
         this.completedAt = LocalDateTime.now();
     }
