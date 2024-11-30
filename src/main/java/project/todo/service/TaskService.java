@@ -53,7 +53,7 @@ public class TaskService {
                 .orElseThrow(() -> new EntityNotFoundException("해당 Task를 찾을 수 없습니다."));
 
         if (task.isCompleted()) {
-            throw new IllegalStateException("이미 완료된 Task입니다.");
+            throw new IllegalStateException("이미 완료된 Task 입니다.");
         }
 
         task.completeTask();

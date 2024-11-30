@@ -54,7 +54,7 @@ class TaskServiceTest {
         List<Task> tasks = List.of(
                 new Task(todo, "작업1"),
                 new Task(todo, "작업2"),
-                new Task(todo ,"작업3")
+                new Task(todo, "작업3")
         );
         taskRepository.saveAll(tasks);
     }
@@ -123,7 +123,7 @@ class TaskServiceTest {
             taskService.completeTask(taskId);
         })
                 .isInstanceOf(IllegalStateException.class)
-                .hasMessage("이미 완료된 Task입니다.");
+                .hasMessage("이미 완료된 Task 입니다.");
     }
 
     @DisplayName("Task 삭제 처리")
