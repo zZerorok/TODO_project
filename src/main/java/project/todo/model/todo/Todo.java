@@ -38,6 +38,10 @@ public class Todo {
     }
 
     public void updateFromRequest(TodoUpdateRequest request) {
+        if (this.isCompleted) {
+            throw new IllegalStateException("이미 완료된 Todo는 수정할 수 없습니다.");
+        }
+
         this.title = request.title();
         this.deadline = request.deadline();
     }
