@@ -42,6 +42,15 @@ public class Todo {
         this.deadline = request.deadline();
     }
 
+    public void complete() {
+        if (this.isCompleted) {
+            throw new IllegalStateException("이미 완료된 Todo 입니다.");
+        }
+
+        this.isCompleted = true;
+        this.completedAt = LocalDateTime.now();
+    }
+
     public Long getId() {
         return id;
     }
