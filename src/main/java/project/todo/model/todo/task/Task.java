@@ -48,7 +48,7 @@ public class Task {
         }
     }
 
-    public void completeTask() {
+    public void complete() {
         if (isCompleted()) {
             throw new IllegalStateException("이미 완료된 Task 입니다.");
         }
@@ -63,6 +63,10 @@ public class Task {
 
     public Todo getTodo() {
         return todo;
+    }
+
+    public Long getTodoId() {
+        return todo.getId();
     }
 
     public String getContent() {
