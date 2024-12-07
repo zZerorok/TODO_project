@@ -52,9 +52,24 @@ public class TaskService {
         Task task = taskRepository.findById(taskId)
                 .orElseThrow(() -> new EntityNotFoundException("해당 Task를 찾을 수 없습니다."));
 
-        task.completeTask();
-
+        task.complete();
         taskRepository.save(task);
+
+        Long todoId = task.getTodoId();
+        List<Task> tasks = taskRepository.findAllByTodoId(todoId);
+
+        if (tasks.isEmpty()) {
+            throw new EntityNotFoundException("해당 Todo에 대한 Task가 존재하지 않습니다.");
+        }
+
+        boolean isAllTasksCompleted = tasks.stream()
+                .allMatch(Task::isCompleted);
+
+        if (isAllTasksCompleted) {
+            Todo todo = task.getTodo();
+            todo.complete();
+            todoRepository.save(todo);
+        }
     }
 
     public void delete(Long taskId) {
