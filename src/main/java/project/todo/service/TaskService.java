@@ -48,14 +48,13 @@ public class TaskService {
         taskRepository.save(task);
     }
 
-    public void completeTask(Long taskId) {
+    public void completeTask(Long todoId, Long taskId) {
         Task task = taskRepository.findById(taskId)
                 .orElseThrow(() -> new EntityNotFoundException("해당 Task를 찾을 수 없습니다."));
 
         task.complete();
         taskRepository.save(task);
 
-        Long todoId = task.getTodoId();
         List<Task> tasks = taskRepository.findAllByTodoId(todoId);
 
         if (tasks.isEmpty()) {

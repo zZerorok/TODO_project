@@ -9,7 +9,7 @@ import project.todo.service.TaskService;
 
 import java.util.List;
 
-@RequestMapping("/{todoId}/tasks")
+@RequestMapping("/todos/{todoId}/tasks")
 @RestController
 public class TaskController {
     private final TaskService taskService;
@@ -31,8 +31,9 @@ public class TaskController {
     }
 
     @PutMapping("/{taskId}/complete")
-    public ResponseEntity<Void> completeTask(@PathVariable Long taskId) {
-        taskService.completeTask(taskId);
+    public ResponseEntity<Void> completeTask(@PathVariable Long todoId,
+                                             @PathVariable Long taskId) {
+        taskService.completeTask(todoId, taskId);
         return ResponseEntity.noContent().build();
     }
 
