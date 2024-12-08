@@ -44,7 +44,8 @@ public class Task {
 
         if (deadline.equals(createdDate) || createdDate.isAfter(deadline)) {
             throw new DeadlineExceededException(
-                    String.format("마감일(%s)을 초과할 수 없습니다.", deadline));
+                    String.format("마감일(%s)을 초과할 수 없습니다.", deadline)
+            );
         }
     }
 
@@ -79,10 +80,6 @@ public class Task {
 
     public Todo getTodo() {
         return todo;
-    }
-
-    public Long getTodoId() {
-        return todo.getId();
     }
 
     public String getContent() {
