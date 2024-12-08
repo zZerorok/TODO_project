@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 
 @Entity
 public class Member {
+    public static final int MAX_LENGTH = 10;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -15,12 +16,17 @@ public class Member {
 
     public Member(String name) {
         validateName(name);
+
         this.name = name;
     }
 
     private void validateName(String name) {
-        if (name == null || name.isBlank() || name.length() > 10) {
-            throw new IllegalArgumentException("사용자의 이름은 1글자 이상 10글자 이하입니다.");
+        if (name == null || name.isBlank()) {
+            throw new IllegalArgumentException("이름을 입력해주세요.");
+        }
+
+        if (MAX_LENGTH < name.length()) {
+            throw new IllegalArgumentException("이름은 10자를 초과할 수 없습니다.");
         }
     }
 
