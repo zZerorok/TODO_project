@@ -31,12 +31,20 @@ public class TodoController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @PutMapping("/{todoId}/update")
+    @PutMapping("/{todoId}")
+    public ResponseEntity<Void> updateAll(@PathVariable Long todoId,
+                                          @RequestBody TodoUpdateRequest request) {
+        todoService.updateAll(todoId, request);
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    @PutMapping("/{todoId}")
     public ResponseEntity<Void> update(@PathVariable Long todoId,
                                        @RequestBody TodoUpdateRequest request) {
         todoService.update(todoId, request);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
+
 
     @DeleteMapping("/{todoId}/delete")
     public void delete(@PathVariable Long todoId) {
