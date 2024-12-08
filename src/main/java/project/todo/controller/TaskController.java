@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import project.todo.model.todo.task.TaskAddRequest;
 import project.todo.model.todo.task.TaskResponse;
+import project.todo.model.todo.task.TaskUpdateRequest;
 import project.todo.service.TaskService;
 
 import java.util.List;
@@ -28,6 +29,13 @@ public class TaskController {
                                     @RequestBody TaskAddRequest request) {
         taskService.add(todoId, request);
         return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @PatchMapping("/{taskId}")
+    public ResponseEntity<Void> update(@PathVariable Long taskId,
+                                       @RequestBody TaskUpdateRequest request) {
+        taskService.update(taskId, request);
+        return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/{taskId}/complete")
