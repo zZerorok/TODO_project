@@ -56,13 +56,7 @@ public class TodoService {
         Todo todo = todoRepository.findById(todoId)
                 .orElseThrow(() -> new EntityNotFoundException("Todo not found with id: " + todoId));
 
-        if (request.title() != null) {
-            todo.updateTitle(request.title());
-        }
-
-        if (request.deadline() != null) {
-            todo.updateDeadline(request.deadline());
-        }
+        todo.updateFrom(request);
 
         if (todo.isChanged(request)) {
             todoRepository.save(todo);

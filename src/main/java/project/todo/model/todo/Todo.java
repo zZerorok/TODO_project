@@ -43,8 +43,13 @@ public class Todo {
             throw new IllegalStateException("이미 완료된 Todo는 수정할 수 없습니다.");
         }
 
-        updateTitle(request.title());
-        updateDeadline(request.deadline());
+        if (request.title() != null) {
+            updateTitle(request.title());
+        }
+
+        if (request.deadline() != null) {
+            updateDeadline(request.deadline());
+        }
     }
 
     public void updateTitle(String title) {
