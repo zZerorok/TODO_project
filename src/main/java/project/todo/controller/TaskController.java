@@ -21,7 +21,8 @@ public class TaskController {
 
     @GetMapping
     public ResponseEntity<List<TaskResponse>> findTasks(@PathVariable Long todoId) {
-        return ResponseEntity.ok(taskService.findTasks(todoId));
+        List<TaskResponse> tasks = taskService.findTasks(todoId);
+        return ResponseEntity.ok(tasks);
     }
 
     @PostMapping
@@ -48,6 +49,6 @@ public class TaskController {
     @DeleteMapping("/{taskId}")
     public ResponseEntity<Void> delete(@PathVariable Long taskId) {
         taskService.delete(taskId);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        return ResponseEntity.noContent().build();
     }
 }
