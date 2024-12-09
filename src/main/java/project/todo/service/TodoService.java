@@ -18,7 +18,7 @@ public class TodoService {
         this.memberRepository = memberRepository;
     }
 
-    public List<TodoResponse> findAll(Long memberId) {
+    public List<TodoResponse> findTodos(Long memberId) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new EntityNotFoundException("Member not found"));
 
@@ -33,8 +33,8 @@ public class TodoService {
                 .toList();
     }
 
-    public void create(TodoCreateRequest request) {
-        Member member = memberRepository.getReferenceById(request.memberId());
+    public void create(Long memberId, TodoCreateRequest request) {
+        Member member = memberRepository.getReferenceById(memberId);
         Todo todo = new Todo(
                 member,
                 request.title(),
@@ -48,8 +48,8 @@ public class TodoService {
         Todo todo = todoRepository.findById(todoId)
                 .orElseThrow(() -> new EntityNotFoundException("Todo not found with id: " + todoId));
 
-            todo.updateFrom(request);
-            todoRepository.save(todo);
+        todo.updateFrom(request);
+        todoRepository.save(todo);
     }
 
     public void update(Long todoId, TodoUpdateRequest request) {
