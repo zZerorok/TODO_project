@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import project.todo.exception.todo.DeadlineExceededException;
 import project.todo.model.todo.Todo;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -39,12 +38,9 @@ public class Task {
     }
 
     private void validateDeadline(Todo todo, LocalDateTime createdAt) {
-        LocalDate deadline = todo.getDeadline();
-        LocalDate createdDate = createdAt.toLocalDate();
-
-        if (deadline.equals(createdDate) || createdDate.isAfter(deadline)) {
+        if (createdAt.isAfter(todo.getDeadline())) {
             throw new DeadlineExceededException(
-                    String.format("마감일(%s)을 초과할 수 없습니다.", deadline)
+                    String.format("마감일(%s)을 초과할 수 없습니다.", todo.getDeadline())
             );
         }
     }
