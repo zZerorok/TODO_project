@@ -34,7 +34,9 @@ public class TodoService {
     }
 
     public void create(Long memberId, TodoCreateRequest request) {
-        Member member = memberRepository.getReferenceById(memberId);
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new EntityNotFoundException("Member not found"));
+
         Todo todo = new Todo(
                 member,
                 request.title(),
