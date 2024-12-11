@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import project.todo.model.todo.Todo;
 import project.todo.model.todo.TodoRepository;
 import project.todo.model.todo.task.*;
+import project.todo.model.todo.task.TaskRepository;
 
 import java.util.List;
 
@@ -49,9 +50,11 @@ public class TaskService {
         Task task = taskRepository.findById(taskId)
                 .orElseThrow(() -> new EntityNotFoundException("해당 Task를 찾을 수 없습니다."));
 
-        task.updateFrom(request);
+        request.updateTo(task);
 
-        taskRepository.save(task);
+        if (request.isChanged(task)) {
+            taskRepository.save(task);
+        }
     }
 
     public void completeTask(Long todoId, Long taskId) {
