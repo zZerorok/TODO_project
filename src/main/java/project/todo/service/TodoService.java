@@ -46,21 +46,13 @@ public class TodoService {
         todoRepository.save(todo);
     }
 
-    public void updateAll(Long todoId, TodoUpdateRequest request) {
-        Todo todo = todoRepository.findById(todoId)
-                .orElseThrow(() -> new EntityNotFoundException("Todo not found with id: " + todoId));
-
-        todo.updateFrom(request);
-        todoRepository.save(todo);
-    }
-
     public void update(Long todoId, TodoUpdateRequest request) {
         Todo todo = todoRepository.findById(todoId)
                 .orElseThrow(() -> new EntityNotFoundException("Todo not found with id: " + todoId));
 
-        todo.updateFrom(request);
+        request.updateTo(todo);
 
-        if (todo.isChanged(request)) {
+        if (request.isChanged(todo)) {
             todoRepository.save(todo);
         }
     }
