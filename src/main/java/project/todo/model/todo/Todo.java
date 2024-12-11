@@ -2,10 +2,10 @@ package project.todo.model.todo;
 
 import jakarta.persistence.*;
 import project.todo.model.member.Member;
+import project.todo.util.DateUtils;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Objects;
 
 @Entity
 public class Todo {
@@ -18,8 +18,8 @@ public class Todo {
     @JoinColumn(name = "member_id")
     private Member member;
     private String title;
+    private LocalDateTime deadline;
     private LocalDateTime createdAt;
-    private LocalDate deadline;
     private boolean isCompleted;
     private LocalDateTime completedAt;
 
@@ -27,15 +27,23 @@ public class Todo {
     }
 
     public Todo(Member member, String title, LocalDate deadline) {
-        this(member, title, deadline, LocalDateTime.now());
+        this(member, title, DateUtils.toEndOfDay(deadline), LocalDateTime.now());
     }
 
-    public Todo(Member member, String title, LocalDate deadline, LocalDateTime createdAt) {
+    public Todo(Member member, String title, LocalDateTime deadline, LocalDateTime createdAt) {
+        validateDeadline(deadline, createdAt);
+
         this.member = member;
         this.title = title;
-        this.createdAt = createdAt;
         this.deadline = deadline;
+        this.createdAt = createdAt;
         this.isCompleted = false;
+    }
+
+    private void validateDeadline(LocalDateTime deadline, LocalDateTime createdAt) {
+        if (deadline.isBefore(createdAt)) {
+            throw new IllegalArgumentException("마감일은 과거일 수 없습니다.");
+        }
     }
 
     public void updateFrom(TodoUpdateRequest request) {
@@ -48,7 +56,7 @@ public class Todo {
         }
 
         if (request.deadline() != null) {
-            updateDeadline(request.deadline());
+            updateDeadline(DateUtils.toEndOfDay(request.deadline()));
         }
     }
 
@@ -58,7 +66,7 @@ public class Todo {
         }
     }
 
-    public void updateDeadline(LocalDate deadline) {
+    public void updateDeadline(LocalDateTime deadline) {
         if (!this.deadline.equals(deadline)) {
             this.deadline = deadline;
         }
@@ -90,12 +98,12 @@ public class Todo {
         return title;
     }
 
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
+    public LocalDateTime getDeadline() {
+        return deadline;
     }
 
-    public LocalDate getDeadline() {
-        return deadline;
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 
     public boolean isCompleted() {
@@ -104,18 +112,5 @@ public class Todo {
 
     public LocalDateTime getCompletedAt() {
         return completedAt;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Todo todo = (Todo) o;
-        return isCompleted == todo.isCompleted && Objects.equals(id, todo.id) && Objects.equals(member, todo.member) && Objects.equals(title, todo.title) && Objects.equals(createdAt, todo.createdAt) && Objects.equals(deadline, todo.deadline) && Objects.equals(completedAt, todo.completedAt);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, member, title, createdAt, deadline, isCompleted, completedAt);
     }
 }
