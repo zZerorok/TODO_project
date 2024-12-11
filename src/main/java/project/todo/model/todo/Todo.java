@@ -46,35 +46,16 @@ public class Todo {
         }
     }
 
-    public void updateFrom(TodoUpdateRequest request) {
-        if (this.isCompleted) {
-            throw new IllegalStateException("이미 완료된 Todo는 수정할 수 없습니다.");
-        }
-
-        if (request.title() != null) {
-            updateTitle(request.title());
-        }
-
-        if (request.deadline() != null) {
-            updateDeadline(DateUtils.toEndOfDay(request.deadline()));
-        }
-    }
-
-    public void updateTitle(String title) {
+    public void changeTitle(String title) {
         if (!this.title.equals(title)) {
             this.title = title;
         }
     }
 
-    public void updateDeadline(LocalDateTime deadline) {
+    public void changeDeadline(LocalDateTime deadline) {
         if (!this.deadline.equals(deadline)) {
             this.deadline = deadline;
         }
-    }
-
-    public boolean isChanged(TodoUpdateRequest request) {
-        return !this.title.equals(request.title())
-                || !this.deadline.equals(request.deadline());
     }
 
     public void complete() {
