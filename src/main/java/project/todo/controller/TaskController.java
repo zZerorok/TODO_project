@@ -39,7 +39,7 @@ public class TaskController {
         return ResponseEntity.noContent().build();
     }
 
-    @PatchMapping("/{taskId}")
+    @PatchMapping("/{taskId}/complete")
     public ResponseEntity<Void> completeTask(@PathVariable Long todoId,
                                              @PathVariable Long taskId) {
         taskService.completeTask(todoId, taskId);
