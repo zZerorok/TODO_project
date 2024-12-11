@@ -23,17 +23,22 @@ class TodoTest {
         );
     }
 
-    @DisplayName("주어진 값으로 Todo 객체가 생성된다.")
+    @DisplayName("주어진 값으로 새로운 Todo 객체가 생성된다.")
     @Test
     void initTodo() {
+        var newTodo = new Todo(
+                new Member("user"),
+                "최종 프로젝트",
+                LocalDate.of(2025, 12, 25)
+        );
 
-        assertThat(todo.getMember().getName()).isEqualTo("member");
-        assertThat(todo.getTitle()).isEqualTo("프로젝트");
-        assertThat(todo.getDeadline()).isEqualTo(LocalDate.of(2024, 12, 25));
-        assertThat(todo.isCompleted()).isFalse();
+        assertThat(newTodo.getMember().getName()).isEqualTo("user");
+        assertThat(newTodo.getTitle()).isEqualTo("최종 프로젝트");
+        assertThat(newTodo.getDeadline()).isEqualTo(LocalDate.of(2025, 12, 25));
+        assertThat(newTodo.isCompleted()).isFalse();
     }
 
-    @DisplayName("Todo의 제목이 변경된다.")
+    @DisplayName("Todo의 제목을 변경할 수 있다.")
     @Test
     void updateTitle() {
         var request = new TodoUpdateRequest("프로젝트2", null);
@@ -42,11 +47,13 @@ class TodoTest {
         assertThat(todo.getTitle()).isEqualTo(request.title());
     }
 
-    @DisplayName("Todo의 마감일이 변경된다.")
+    @DisplayName("Todo의 마감일을 변경할 수 있다.")
     @Test
     void updateDeadline() {
-        var request = new TodoUpdateRequest(null,
-                LocalDate.of(2025, 1, 1));
+        var request = new TodoUpdateRequest(
+                null,
+                LocalDate.of(2025, 1, 1)
+        );
         todo.updateDeadline(request.deadline());
 
         assertThat(todo.getDeadline()).isEqualTo(request.deadline());
@@ -55,8 +62,10 @@ class TodoTest {
     @DisplayName("Todo의 제목과 마감일을 한 번에 변경할 수 있다.")
     @Test
     void updateTitleAndDeadline() {
-        var request = new TodoUpdateRequest("프로젝트2",
-                LocalDate.of(2025, 1, 1));
+        var request = new TodoUpdateRequest(
+                "프로젝트2",
+                LocalDate.of(2025, 1, 1)
+        );
         todo.updateFrom(request);
 
         assertThat(todo.getTitle()).isEqualTo(request.title());
@@ -67,8 +76,10 @@ class TodoTest {
     @Test
     void updateWithAlreadyCompletedTodo() {
         todo.complete();
-        var request = new TodoUpdateRequest("프로젝트2",
-                LocalDate.of(2025, 1, 1));
+        var request = new TodoUpdateRequest(
+                "프로젝트2",
+                LocalDate.of(2025, 1, 1)
+        );
 
         assertThatThrownBy(() -> todo.updateFrom(request))
                 .isInstanceOf(IllegalStateException.class)
@@ -85,7 +96,7 @@ class TodoTest {
         assertThat(todo.getCompletedAt()).isBetween(now.minusSeconds(1), now.plusSeconds(1));
     }
 
-    @DisplayName("이미 완료된 Todo에 다시 완료를 시도하면 예외 발생")
+    @DisplayName("이미 완료된 Todo에 다시 완료 처리를 시도하면 예외 발생")
     @Test
     void completeWithAlreadyCompletedTodo() {
         todo.complete();
