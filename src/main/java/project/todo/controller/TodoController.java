@@ -33,13 +33,6 @@ public class TodoController {
     }
 
     @PutMapping("/{todoId}")
-    public ResponseEntity<Void> updateAll(@PathVariable Long todoId,
-                                          @RequestBody TodoUpdateRequest request) {
-        todoService.updateAll(todoId, request);
-        return ResponseEntity.ok().build();
-    }
-
-    @PatchMapping("/{todoId}")
     public ResponseEntity<Void> update(@PathVariable Long todoId,
                                        @RequestBody TodoUpdateRequest request) {
         todoService.update(todoId, request);
