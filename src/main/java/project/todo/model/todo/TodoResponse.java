@@ -17,7 +17,7 @@ public record TodoResponse(
                 todo.getId(),
                 todo.getTitle(),
                 todo.getCreatedAt(),
-                todo.getDeadline(),
+                todo.getDeadline().toLocalDate(),
                 todo.isCompleted(),
                 todo.getCompletedAt()
         );
