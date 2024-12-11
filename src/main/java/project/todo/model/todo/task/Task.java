@@ -45,6 +45,12 @@ public class Task {
         }
     }
 
+    public void changeContent(String content) {
+        if (!this.content.equals(content)) {
+            this.content = content;
+        }
+    }
+
     public void complete() {
         if (isCompleted()) {
             throw new IllegalStateException("이미 완료된 Task 입니다.");
@@ -52,22 +58,6 @@ public class Task {
 
         this.isCompleted = true;
         this.completedAt = LocalDateTime.now();
-    }
-
-    public void updateFrom(TaskUpdateRequest request) {
-        if (isCompleted()) {
-            throw new IllegalStateException("이미 완료된 Task는 수정할 수 없습니다.");
-        }
-
-        if (request.content() != null) {
-            updateContent(request);
-        }
-    }
-
-    private void updateContent(TaskUpdateRequest request) {
-        if (!this.content.equals(request.content())) {
-            this.content = request.content();
-        }
     }
 
     public Long getId() {
