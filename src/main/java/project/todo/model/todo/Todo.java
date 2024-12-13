@@ -31,6 +31,7 @@ public class Todo {
     }
 
     public Todo(Member member, String title, LocalDateTime deadline, LocalDateTime createdAt) {
+        validateTitle(title);
         validateDeadline(deadline, createdAt);
 
         this.member = member;
@@ -38,6 +39,12 @@ public class Todo {
         this.deadline = deadline;
         this.createdAt = createdAt;
         this.isCompleted = false;
+    }
+
+    private void validateTitle(String title) {
+        if (title == null || title.isBlank()) {
+            throw new IllegalArgumentException("제목은 공백일 수 없습니다.");
+        }
     }
 
     private void validateDeadline(LocalDateTime deadline, LocalDateTime createdAt) {
