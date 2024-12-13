@@ -8,4 +8,6 @@ import java.util.List;
 public interface TaskRepository extends JpaRepository<Task, Long> {
 
     List<Task> findAllByTodoId(Long todoId);
+
+    void deleteByTodoId(Long todoId);
 }
