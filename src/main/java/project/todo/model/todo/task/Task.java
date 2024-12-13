@@ -1,11 +1,13 @@
 package project.todo.model.todo.task;
 
 import jakarta.persistence.*;
+import lombok.Getter;
 import project.todo.exception.todo.DeadlineExceededException;
 import project.todo.model.todo.Todo;
 
 import java.time.LocalDateTime;
 
+@Getter
 @Entity
 public class Task {
 
@@ -18,7 +20,7 @@ public class Task {
     private Todo todo;
     private String content;
     private LocalDateTime createdAt;
-    private boolean isCompleted;
+    private TaskStatus status;
     private LocalDateTime completedAt;
 
     protected Task() {
@@ -35,7 +37,7 @@ public class Task {
         this.todo = todo;
         this.content = content;
         this.createdAt = createdAt;
-        this.isCompleted = false;
+        this.status = TaskStatus.INCOMPLETE;
     }
 
     private void validateContent(String title) {
@@ -45,49 +47,22 @@ public class Task {
     }
 
     private void validateDeadline(Todo todo, LocalDateTime createdAt) {
-        if (createdAt.isAfter(todo.getDeadline())) {
-            throw new DeadlineExceededException(
-                    String.format("마감일(%s)을 초과할 수 없습니다.", todo.getDeadline())
-            );
+        if (todo.getDeadline().isBefore(createdAt)) {
+            throw new DeadlineExceededException("마감일이 초과되어 Task를 생성할 수 없습니다.");
         }
     }
 
     public void changeContent(String content) {
-        if (!this.content.equals(content)) {
-            this.content = content;
-        }
+        this.content = content;
     }
 
     public void complete() {
-        if (isCompleted()) {
-            throw new IllegalStateException("이미 완료된 Task 입니다.");
-        }
-
-        this.isCompleted = true;
+        this.status = TaskStatus.COMPLETED;
         this.completedAt = LocalDateTime.now();
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public Todo getTodo() {
-        return todo;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public boolean isCompleted() {
-        return isCompleted;
-    }
-
-    public LocalDateTime getCompletedAt() {
-        return completedAt;
+    public void incomplete() {
+        this.status = TaskStatus.INCOMPLETE;
+        this.completedAt = null;
     }
 }
