@@ -6,6 +6,7 @@ import project.todo.model.member.Member;
 import project.todo.repository.member.MemberRepository;
 import project.todo.model.todo.*;
 import project.todo.repository.todo.TodoRepository;
+import project.todo.repository.todo.task.TaskRepository;
 
 import java.util.List;
 
@@ -13,10 +14,12 @@ import java.util.List;
 public class TodoService {
     private final TodoRepository todoRepository;
     private final MemberRepository memberRepository;
+    private final TaskRepository taskRepository;
 
-    public TodoService(TodoRepository todoRepository, MemberRepository memberRepository) {
+    public TodoService(TodoRepository todoRepository, MemberRepository memberRepository, TaskRepository taskRepository) {
         this.todoRepository = todoRepository;
         this.memberRepository = memberRepository;
+        this.taskRepository = taskRepository;
     }
 
     public List<TodoResponse> findTodos(Long memberId) {
@@ -62,6 +65,7 @@ public class TodoService {
         Todo todo = todoRepository.findById(todoId)
                 .orElseThrow(() -> new EntityNotFoundException("Todo not found with id: " + todoId));
 
+        taskRepository.deleteByTodoId(todo.getId());
         todoRepository.delete(todo);
     }
 }
