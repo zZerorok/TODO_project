@@ -1,4 +1,6 @@
-package project.todo.model.todo.task;
+package project.todo.service.todo.task;
+
+import project.todo.model.todo.task.Task;
 
 import java.time.LocalDateTime;
 

@@ -1,4 +1,4 @@
-package project.todo.model.member;
+package project.todo.service.member;
 
 public record MemberCreateRequest(
         String name

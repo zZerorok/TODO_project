@@ -4,8 +4,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import project.todo.model.member.Member;
-import project.todo.model.member.MemberCreateRequest;
-import project.todo.service.MemberService;
+import project.todo.service.member.MemberCreateRequest;
+import project.todo.service.member.MemberService;
 
 @RequestMapping("/members")
 @Controller

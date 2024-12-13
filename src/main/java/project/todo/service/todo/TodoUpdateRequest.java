@@ -1,5 +1,6 @@
-package project.todo.model.todo;
+package project.todo.service.todo;
 
+import project.todo.model.todo.Todo;
 import project.todo.util.DateUtils;
 
 import java.time.LocalDate;

@@ -3,10 +3,10 @@ package project.todo.controller;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import project.todo.model.todo.TodoCreateRequest;
-import project.todo.model.todo.TodoResponse;
-import project.todo.model.todo.TodoUpdateRequest;
-import project.todo.service.TodoService;
+import project.todo.service.todo.TodoCreateRequest;
+import project.todo.service.todo.TodoResponse;
+import project.todo.service.todo.TodoUpdateRequest;
+import project.todo.service.todo.TodoService;
 
 import java.util.List;
 

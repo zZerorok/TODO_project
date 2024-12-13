@@ -1,11 +1,11 @@
-package project.todo.service;
+package project.todo.service.todo.task;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import project.todo.model.todo.Todo;
-import project.todo.model.todo.TodoRepository;
+import project.todo.repository.todo.TodoRepository;
 import project.todo.model.todo.task.*;
-import project.todo.model.todo.task.TaskRepository;
+import project.todo.repository.todo.task.TaskRepository;
 
 import java.util.List;
 
