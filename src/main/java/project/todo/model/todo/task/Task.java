@@ -29,12 +29,19 @@ public class Task {
     }
 
     public Task(Todo todo, String content, LocalDateTime createdAt) {
+        validateContent(content);
         validateDeadline(todo, createdAt);
 
         this.todo = todo;
         this.content = content;
         this.createdAt = createdAt;
         this.isCompleted = false;
+    }
+
+    private void validateContent(String title) {
+        if (title == null || title.isBlank()) {
+            throw new IllegalArgumentException("내용은 공백일 수 없습니다.");
+        }
     }
 
     private void validateDeadline(Todo todo, LocalDateTime createdAt) {
