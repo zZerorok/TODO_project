@@ -1,6 +1,7 @@
 package project.todo.service.todo;
 
 import project.todo.model.todo.Todo;
+import project.todo.model.todo.TodoStatus;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -10,7 +11,7 @@ public record TodoResponse(
         String title,
         LocalDateTime createdAt,
         LocalDate deadline,
-        boolean isCompleted,
+        TodoStatus status,
         LocalDateTime completedAt
 ) {
 
@@ -20,7 +21,7 @@ public record TodoResponse(
                 todo.getTitle(),
                 todo.getCreatedAt(),
                 todo.getDeadline().toLocalDate(),
-                todo.isCompleted(),
+                todo.getStatus(),
                 todo.getCompletedAt()
         );
     }
