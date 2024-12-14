@@ -1,12 +1,15 @@
 package project.todo.model.todo.task;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import project.todo.exception.todo.DeadlineExceededException;
 import project.todo.model.todo.Todo;
 
 import java.time.LocalDateTime;
 
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Entity
 public class Task {
@@ -20,11 +23,10 @@ public class Task {
     private Todo todo;
     private String content;
     private LocalDateTime createdAt;
+
+    @Enumerated(EnumType.STRING)
     private TaskStatus status;
     private LocalDateTime completedAt;
-
-    protected Task() {
-    }
 
     public Task(Todo todo, String content) {
         this(todo, content, LocalDateTime.now());
