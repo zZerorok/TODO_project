@@ -54,17 +54,49 @@ public class Task {
         }
     }
 
-    public void changeContent(String content) {
-        this.content = content;
+    public void update(String content) {
+        validateForUpdate();
+
+        if (content != null) {
+            this.content = content;
+        }
+    }
+
+    private void validateForUpdate() {
+        if (this.status.isCompleted()) {
+            throw new IllegalArgumentException("이미 완료된 Task는 수정할 수 없습니다.");
+        }
+
+        if (this.todo.getDeadline().isBefore(LocalDateTime.now())) {
+            throw new IllegalArgumentException("마감일이 초과되어 수정할 수 없습니다..");
+        }
     }
 
     public void complete() {
+        checkDeadline(TaskStatus.COMPLETED);
+
+        if (this.status.isCompleted()) {
+            throw new IllegalStateException("이미 완료된 Task는 완료 처리할 수 없습니다.");
+        }
+
         this.status = TaskStatus.COMPLETED;
         this.completedAt = LocalDateTime.now();
     }
 
-    public void incomplete() {
+    public void inComplete() {
+        checkDeadline(TaskStatus.INCOMPLETE);
+
+        if (!this.status.isCompleted()) {
+            throw new IllegalStateException("완료되지 않은 Task는 해제할 수 없습니다.");
+        }
+
         this.status = TaskStatus.INCOMPLETE;
         this.completedAt = null;
+    }
+
+    private void checkDeadline(TaskStatus status) {
+        if (this.todo.getDeadline().isBefore(LocalDateTime.now())) {
+            throw new IllegalArgumentException("마감일이 초과되어 " + status.getStatus() + " 처리할 수 없습니다.");
+        }
     }
 }
