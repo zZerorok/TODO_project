@@ -1,6 +1,7 @@
 package project.todo.service.todo.task;
 
 import project.todo.model.todo.task.Task;
+import project.todo.model.todo.task.TaskStatus;
 
 import java.time.LocalDateTime;
 
@@ -8,7 +9,7 @@ public record TaskResponse(
         Long id,
         String content,
         LocalDateTime createdAt,
-        boolean isCompleted,
+        TaskStatus status,
         LocalDateTime completedAt
 ) {
 
@@ -17,7 +18,7 @@ public record TaskResponse(
                 task.getId(),
                 task.getContent(),
                 task.getCreatedAt(),
-                task.isCompleted(),
+                task.getStatus(),
                 task.getCompletedAt()
         );
     }
