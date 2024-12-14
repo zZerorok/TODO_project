@@ -1,12 +1,17 @@
 package project.todo.model.todo;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import project.todo.model.member.Member;
-import project.todo.util.DateUtils;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
 @Entity
 public class Todo {
 
@@ -20,14 +25,13 @@ public class Todo {
     private String title;
     private LocalDateTime deadline;
     private LocalDateTime createdAt;
-    private boolean isCompleted;
+
+    @Enumerated(EnumType.STRING)
+    private TodoStatus status;
     private LocalDateTime completedAt;
 
-    protected Todo() {
-    }
-
     public Todo(Member member, String title, LocalDate deadline) {
-        this(member, title, DateUtils.toEndOfDay(deadline), LocalDateTime.now());
+        this(member, title, deadline.atTime(LocalTime.MAX), LocalDateTime.now());
     }
 
     public Todo(Member member, String title, LocalDateTime deadline, LocalDateTime createdAt) {
@@ -38,7 +42,7 @@ public class Todo {
         this.title = title;
         this.deadline = deadline;
         this.createdAt = createdAt;
-        this.isCompleted = false;
+        this.status = TodoStatus.INCOMPLETE;
     }
 
     private void validateTitle(String title) {
@@ -49,56 +53,57 @@ public class Todo {
 
     private void validateDeadline(LocalDateTime deadline, LocalDateTime createdAt) {
         if (deadline.isBefore(createdAt)) {
-            throw new IllegalArgumentException("마감일은 과거일 수 없습니다.");
+            throw new IllegalArgumentException("마감일은 현재보다 과거일 수 없습니다.");
         }
     }
 
-    public void changeTitle(String title) {
-        if (!this.title.equals(title)) {
+    public void update(String title, LocalDate deadline) {
+        validateForUpdate();
+
+        if (title != null) {
             this.title = title;
         }
+
+        if (deadline != null) {
+            this.deadline = deadline.atTime(LocalTime.MAX);
+        }
     }
 
-    public void changeDeadline(LocalDateTime deadline) {
-        if (!this.deadline.equals(deadline)) {
-            this.deadline = deadline;
+    private void validateForUpdate() {
+        if (this.status.isCompleted()) {
+            throw new IllegalArgumentException("이미 완료된 Todo는 수정할 수 없습니다.");
+        }
+
+        if (this.deadline.isBefore(LocalDateTime.now())) {
+            throw new IllegalArgumentException("마감일이 초과되어 수정할 수 없습니다..");
         }
     }
 
     public void complete() {
-        if (this.isCompleted) {
-            throw new IllegalStateException("이미 완료된 Todo 입니다.");
+        checkDeadline(TodoStatus.COMPLETED);
+
+        if (this.status.isCompleted()) {
+            throw new IllegalStateException("이미 완료된 Todo는 완료 처리할 수 없습니다.");
         }
 
-        this.isCompleted = true;
+        this.status = TodoStatus.COMPLETED;
         this.completedAt = LocalDateTime.now();
     }
 
-    public Long getId() {
-        return id;
+    public void inComplete() {
+        checkDeadline(TodoStatus.INCOMPLETE);
+
+        if (!this.status.isCompleted()) {
+            throw new IllegalStateException("완료되지 않은 Todo는 해제할 수 없습니다.");
+        }
+
+        this.status = TodoStatus.INCOMPLETE;
+        this.completedAt = null;
     }
 
-    public Member getMember() {
-        return member;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public LocalDateTime getDeadline() {
-        return deadline;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public boolean isCompleted() {
-        return isCompleted;
-    }
-
-    public LocalDateTime getCompletedAt() {
-        return completedAt;
+    private void checkDeadline(TodoStatus status) {
+        if (this.deadline.isBefore(LocalDateTime.now())) {
+            throw new IllegalArgumentException("마감일이 초과되어 " + status.getStatus() + " 처리할 수 없습니다.");
+        }
     }
 }
