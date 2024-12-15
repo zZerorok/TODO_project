@@ -83,7 +83,7 @@ public class Task {
         this.completedAt = LocalDateTime.now();
     }
 
-    public void inComplete() {
+    public void incomplete() {
         checkDeadline(TaskStatus.INCOMPLETE);
 
         if (!this.status.isCompleted()) {
