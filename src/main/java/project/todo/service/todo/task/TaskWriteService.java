@@ -11,8 +11,6 @@ import project.todo.repository.todo.task.TaskRepository;
 import project.todo.service.todo.task.dto.TaskAddRequest;
 import project.todo.service.todo.task.dto.TaskUpdateRequest;
 
-import java.util.List;
-
 @RequiredArgsConstructor
 @Transactional
 @Service
@@ -33,20 +31,15 @@ public class TaskWriteService {
     public void update(Long taskId, TaskUpdateRequest request) {
         var task = getTask(taskId);
         task.update(request.content());
-
-        taskRepository.save(task);
     }
 
     public void complete(Long todoId, Long taskId) {
         var task = getTask(taskId);
         task.complete();
-        taskRepository.save(task);
 
-        var tasks = findTasksByTodoId(todoId);
-        if (isAllTasksCompleted(tasks)) {
-            Todo todo = task.getTodo();
+        if (isAllTasksCompleted(todoId)) {
+            var todo = task.getTodo();
             todo.complete();
-            todoRepository.save(todo);
         }
     }
 
@@ -56,28 +49,19 @@ public class TaskWriteService {
         taskRepository.delete(task);
     }
 
-    private Todo getTodo(Long todoId) {
+    private Todo getTodo(long todoId) {
         return todoRepository.findById(todoId)
                 .orElseThrow(() -> new EntityNotFoundException("해당 Todo를 찾을 수 없습니다."));
     }
 
-    private Task getTask(Long taskId) {
+    private Task getTask(long taskId) {
         return taskRepository.findById(taskId)
                 .orElseThrow(() -> new EntityNotFoundException("해당 Task를 찾을 수 없습니다."));
     }
 
-    private List<Task> findTasksByTodoId(Long todoId) {
-        var tasks = taskRepository.findAllByTodoId(todoId);
-
-        if (tasks.isEmpty()) {
-            throw new EntityNotFoundException("해당 Todo에 대한 Task가 존재하지 않습니다.");
-        }
-
-        return tasks;
-    }
-
-    private boolean isAllTasksCompleted(List<Task> tasks) {
-        return tasks.stream()
+    private boolean isAllTasksCompleted(long todoId) {
+        return taskRepository.findAllByTodoId(todoId)
+                .stream()
                 .allMatch(it -> it.getStatus().isCompleted());
     }
 }
