@@ -1,4 +1,4 @@
-package project.todo.service.todo.task;
+package project.todo.service.todo.task.dto;
 
 import project.todo.model.todo.task.Task;
 import project.todo.model.todo.task.TaskStatus;

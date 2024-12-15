@@ -1,4 +1,4 @@
-package project.todo.service.todo;
+package project.todo.service.todo.dto;
 
 import java.time.LocalDate;
 
