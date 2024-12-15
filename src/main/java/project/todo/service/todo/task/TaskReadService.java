@@ -8,7 +8,7 @@ import project.todo.model.todo.Todo;
 import project.todo.model.todo.task.Task;
 import project.todo.repository.todo.TodoRepository;
 import project.todo.repository.todo.task.TaskRepository;
-import project.todo.service.todo.task.dto.TaskResponse;
+import project.todo.service.todo.task.dto.TaskDetailResponse;
 
 import java.util.List;
 
@@ -19,12 +19,12 @@ public class TaskReadService {
     private final TaskRepository taskRepository;
     private final TodoRepository todoRepository;
 
-    public List<TaskResponse> findTasks(Long todoId) {
+    public List<TaskDetailResponse> findTasks(Long todoId) {
         var todo = getTodo(todoId);
         var tasks = getTasks(todo);
 
         return tasks.stream()
-                .map(TaskResponse::from)
+                .map(TaskDetailResponse::from)
                 .toList();
     }
 

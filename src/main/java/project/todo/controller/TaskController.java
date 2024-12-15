@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import project.todo.service.todo.task.TaskWriteService;
 import project.todo.service.todo.task.dto.TaskAddRequest;
-import project.todo.service.todo.task.dto.TaskResponse;
+import project.todo.service.todo.task.dto.TaskDetailResponse;
 import project.todo.service.todo.task.dto.TaskUpdateRequest;
 import project.todo.service.todo.task.TaskReadService;
 
@@ -20,7 +20,7 @@ public class TaskController {
     private final TaskWriteService taskWriteService;
 
     @GetMapping
-    public ResponseEntity<List<TaskResponse>> findTasks(@PathVariable Long todoId) {
+    public ResponseEntity<List<TaskDetailResponse>> findTasks(@PathVariable Long todoId) {
         var tasks = taskReadService.findTasks(todoId);
         return ResponseEntity.ok(tasks);
     }
@@ -40,8 +40,8 @@ public class TaskController {
     }
 
     @PatchMapping("/{taskId}/complete")
-    public ResponseEntity<Void> completeTask(@PathVariable Long todoId,
-                                             @PathVariable Long taskId) {
+    public ResponseEntity<Void> complete(@PathVariable Long todoId,
+                                         @PathVariable Long taskId) {
         taskWriteService.complete(todoId, taskId);
         return ResponseEntity.noContent().build();
     }

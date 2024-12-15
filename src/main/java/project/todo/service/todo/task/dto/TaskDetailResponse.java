@@ -5,7 +5,7 @@ import project.todo.model.todo.task.TaskStatus;
 
 import java.time.LocalDateTime;
 
-public record TaskResponse(
+public record TaskDetailResponse(
         Long id,
         String content,
         LocalDateTime createdAt,
@@ -13,8 +13,8 @@ public record TaskResponse(
         LocalDateTime completedAt
 ) {
 
-    public static TaskResponse from(Task task) {
-        return new TaskResponse(
+    public static TaskDetailResponse from(Task task) {
+        return new TaskDetailResponse(
                 task.getId(),
                 task.getContent(),
                 task.getCreatedAt(),

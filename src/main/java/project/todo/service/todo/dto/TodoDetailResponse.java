@@ -6,21 +6,21 @@ import project.todo.model.todo.TodoStatus;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-public record TodoResponse(
+public record TodoDetailResponse(
         Long id,
         String title,
-        LocalDateTime createdAt,
         LocalDate deadline,
+        LocalDateTime createdAt,
         TodoStatus status,
         LocalDateTime completedAt
 ) {
 
-    public static TodoResponse from(Todo todo) {
-        return new TodoResponse(
+    public static TodoDetailResponse from(Todo todo) {
+        return new TodoDetailResponse(
                 todo.getId(),
                 todo.getTitle(),
-                todo.getCreatedAt(),
                 todo.getDeadline().toLocalDate(),
+                todo.getCreatedAt(),
                 todo.getStatus(),
                 todo.getCompletedAt()
         );
