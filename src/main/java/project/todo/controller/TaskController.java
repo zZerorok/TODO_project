@@ -46,6 +46,13 @@ public class TaskController {
         return ResponseEntity.noContent().build();
     }
 
+    @PatchMapping("/{taskId}/incomplete")
+    public ResponseEntity<Void> incomplete(@PathVariable Long todoId,
+                                           @PathVariable Long taskId) {
+        taskWriteService.incomplete(todoId, taskId);
+        return ResponseEntity.noContent().build();
+    }
+
     @DeleteMapping("/{taskId}")
     public ResponseEntity<Void> delete(@PathVariable Long taskId) {
         taskWriteService.delete(taskId);

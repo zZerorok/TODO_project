@@ -43,6 +43,16 @@ public class TaskWriteService {
         }
     }
 
+    public void incomplete(Long todoId, Long taskId) {
+        var task = getTask(taskId);
+        task.incomplete();
+
+        var todo = getTodo(todoId);
+        if (isCompleted(todo)) {
+            todo.incomplete();
+        }
+    }
+
     public void delete(Long taskId) {
         var task = getTask(taskId);
 
@@ -63,5 +73,9 @@ public class TaskWriteService {
         return taskRepository.findAllByTodoId(todoId)
                 .stream()
                 .allMatch(it -> it.getStatus().isCompleted());
+    }
+
+    private boolean isCompleted(Todo todo) {
+        return todo.getStatus().isCompleted();
     }
 }
