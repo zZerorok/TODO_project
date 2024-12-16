@@ -1,47 +1,51 @@
 package project.todo.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import project.todo.service.todo.TodoCreateRequest;
-import project.todo.service.todo.TodoResponse;
-import project.todo.service.todo.TodoUpdateRequest;
-import project.todo.service.todo.TodoService;
+import project.todo.service.todo.TodoWriteService;
+import project.todo.service.todo.dto.*;
+import project.todo.service.todo.TodoReadService;
 
 import java.util.List;
 
+@RequiredArgsConstructor
 @RequestMapping("/todos")
 @RestController
 public class TodoController {
-    private final TodoService todoService;
-
-    public TodoController(TodoService todoService) {
-        this.todoService = todoService;
-    }
+    private final TodoReadService todoReadService;
+    private final TodoWriteService todoWriteService;
 
     @GetMapping("/{memberId}")
-    public ResponseEntity<List<TodoResponse>> findTodos(@PathVariable Long memberId) {
-        List<TodoResponse> todos = todoService.findTodos(memberId);
+    public ResponseEntity<List<TodoSimpleResponse>> findTodos(@PathVariable Long memberId) {
+        var todos = todoReadService.findTodos(memberId);
         return ResponseEntity.ok(todos);
+    }
+
+    @GetMapping("/{todoId}")
+    public ResponseEntity<TodoWithTasksResponse> getTodoWithTasks(@PathVariable Long todoId) {
+        var todoWithTasks = todoReadService.getTodoWithTasks(todoId);
+        return ResponseEntity.ok(todoWithTasks);
     }
 
     @PostMapping("/{memberId}")
     public ResponseEntity<Void> create(@PathVariable Long memberId,
                                        @RequestBody TodoCreateRequest request) {
-        todoService.create(memberId, request);
+        todoWriteService.create(memberId, request);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @PutMapping("/{todoId}")
     public ResponseEntity<Void> update(@PathVariable Long todoId,
                                        @RequestBody TodoUpdateRequest request) {
-        todoService.update(todoId, request);
+        todoWriteService.update(todoId, request);
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{todoId}")
     public ResponseEntity<Void> delete(@PathVariable Long todoId) {
-        todoService.delete(todoId);
+        todoWriteService.delete(todoId);
         return ResponseEntity.noContent().build();
     }
 }
