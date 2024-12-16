@@ -42,8 +42,8 @@ public class Task {
         this.status = TaskStatus.INCOMPLETE;
     }
 
-    private void validateContent(String title) {
-        if (title == null || title.isBlank()) {
+    private void validateContent(String content) {
+        if (content == null || content.isBlank()) {
             throw new IllegalArgumentException("내용은 공백일 수 없습니다.");
         }
     }
@@ -55,14 +55,14 @@ public class Task {
     }
 
     public void update(String content) {
-        validateForUpdate();
+        validateForUpdate(content);
 
-        if (content != null) {
-            this.content = content;
-        }
+        this.content = content;
     }
 
-    private void validateForUpdate() {
+    private void validateForUpdate(String content) {
+        validateContent(content);
+
         if (this.status.isCompleted()) {
             throw new IllegalArgumentException("이미 완료된 Task는 수정할 수 없습니다.");
         }
