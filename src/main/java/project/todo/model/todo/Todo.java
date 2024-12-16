@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import project.todo.model.member.Member;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -18,10 +17,7 @@ public class Todo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @ManyToOne
-    @JoinColumn(name = "member_id")
-    private Member member;
+    private Long memberId;
     private String title;
     private LocalDateTime deadline;
     private LocalDateTime createdAt;
@@ -30,15 +26,15 @@ public class Todo {
     private TodoStatus status;
     private LocalDateTime completedAt;
 
-    public Todo(Member member, String title, LocalDate deadline) {
-        this(member, title, deadline.atTime(LocalTime.MAX), LocalDateTime.now());
+    public Todo(Long memberId, String title, LocalDate deadline) {
+        this(memberId, title, deadline.atTime(LocalTime.MAX), LocalDateTime.now());
     }
 
-    public Todo(Member member, String title, LocalDateTime deadline, LocalDateTime createdAt) {
+    public Todo(Long memberId, String title, LocalDateTime deadline, LocalDateTime createdAt) {
         validateTitle(title);
         validateDeadline(deadline, createdAt);
 
-        this.member = member;
+        this.memberId = memberId;
         this.title = title;
         this.deadline = deadline;
         this.createdAt = createdAt;
@@ -90,7 +86,7 @@ public class Todo {
         this.completedAt = LocalDateTime.now();
     }
 
-    public void inComplete() {
+    public void incomplete() {
         checkDeadline(TodoStatus.INCOMPLETE);
 
         if (!this.status.isCompleted()) {
