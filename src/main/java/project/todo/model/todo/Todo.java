@@ -24,7 +24,6 @@ public class Todo {
 
     @Enumerated(EnumType.STRING)
     private TodoStatus status;
-    private LocalDateTime completedAt;
 
     public Todo(Long memberId, String title, LocalDate deadline) {
         this(memberId, title, deadline.atTime(LocalTime.MAX), LocalDateTime.now());
@@ -48,6 +47,10 @@ public class Todo {
     }
 
     private void validateDeadline(LocalDateTime deadline, LocalDateTime createdAt) {
+        if (deadline == null) {
+            throw new IllegalArgumentException("마감일을 설정해주세요.");
+        }
+
         if (deadline.isBefore(createdAt)) {
             throw new IllegalArgumentException("마감일은 현재보다 과거일 수 없습니다.");
         }
@@ -71,7 +74,7 @@ public class Todo {
         }
 
         if (this.deadline.isBefore(LocalDateTime.now())) {
-            throw new IllegalArgumentException("마감일이 초과되어 수정할 수 없습니다..");
+            throw new IllegalArgumentException("마감일이 초과되어 수정할 수 없습니다.");
         }
     }
 
@@ -83,7 +86,6 @@ public class Todo {
         }
 
         this.status = TodoStatus.COMPLETED;
-        this.completedAt = LocalDateTime.now();
     }
 
     public void incomplete() {
@@ -94,7 +96,6 @@ public class Todo {
         }
 
         this.status = TodoStatus.INCOMPLETE;
-        this.completedAt = null;
     }
 
     private void checkDeadline(TodoStatus status) {
