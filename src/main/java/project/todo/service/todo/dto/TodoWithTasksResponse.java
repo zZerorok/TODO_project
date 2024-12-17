@@ -15,7 +15,6 @@ public record TodoWithTasksResponse(
         LocalDate deadline,
         LocalDateTime createdAt,
         TodoStatus status,
-        LocalDateTime completedAt,
         List<TaskSimpleResponse> tasks
 ) {
 
@@ -30,7 +29,6 @@ public record TodoWithTasksResponse(
                 todo.getDeadline().toLocalDate(),
                 todo.getCreatedAt(),
                 todo.getStatus(),
-                todo.getCompletedAt(),
                 taskResponses
         );
     }

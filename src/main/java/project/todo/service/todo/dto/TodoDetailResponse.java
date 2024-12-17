@@ -11,8 +11,7 @@ public record TodoDetailResponse(
         String title,
         LocalDate deadline,
         LocalDateTime createdAt,
-        TodoStatus status,
-        LocalDateTime completedAt
+        TodoStatus status
 ) {
 
     public static TodoDetailResponse from(Todo todo) {
@@ -21,8 +20,7 @@ public record TodoDetailResponse(
                 todo.getTitle(),
                 todo.getDeadline().toLocalDate(),
                 todo.getCreatedAt(),
-                todo.getStatus(),
-                todo.getCompletedAt()
+                todo.getStatus()
         );
     }
 }
