@@ -9,8 +9,7 @@ public record TaskDetailResponse(
         Long id,
         String content,
         LocalDateTime createdAt,
-        TaskStatus status,
-        LocalDateTime completedAt
+        TaskStatus status
 ) {
 
     public static TaskDetailResponse from(Task task) {
@@ -18,8 +17,7 @@ public record TaskDetailResponse(
                 task.getId(),
                 task.getContent(),
                 task.getCreatedAt(),
-                task.getStatus(),
-                task.getCompletedAt()
+                task.getStatus()
         );
     }
 }
