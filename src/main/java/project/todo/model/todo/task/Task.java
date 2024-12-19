@@ -26,7 +26,6 @@ public class Task {
 
     @Enumerated(EnumType.STRING)
     private TaskStatus status;
-    private LocalDateTime completedAt;
 
     public Task(Todo todo, String content) {
         this(todo, content, LocalDateTime.now());
@@ -80,18 +79,16 @@ public class Task {
         }
 
         this.status = TaskStatus.COMPLETED;
-        this.completedAt = LocalDateTime.now();
     }
 
     public void incomplete() {
         checkDeadline(TaskStatus.INCOMPLETE);
 
         if (!this.status.isCompleted()) {
-            throw new IllegalStateException("완료되지 않은 Task는 해제할 수 없습니다.");
+            throw new IllegalStateException("완료되지 않은 Task는 완료 해제할 수 없습니다.");
         }
 
         this.status = TaskStatus.INCOMPLETE;
-        this.completedAt = null;
     }
 
     private void checkDeadline(TaskStatus status) {
