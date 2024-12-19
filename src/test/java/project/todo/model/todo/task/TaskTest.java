@@ -86,16 +86,14 @@ public class TaskTest {
                 .hasMessage("이미 완료된 Task는 수정할 수 없습니다.");
     }
 
-    @DisplayName("Task 완료 시 완료 상태 및 완료 시간이 갱신된다")
+    @DisplayName("Task 완료 시 완료 상태가 갱신된다.")
     @Test
     void completeTask() {
         var task = new Task(todo, "task");
         assertThat(task.getStatus().isCompleted()).isFalse();
-        assertThat(task.getCompletedAt()).isNull();
 
         task.complete();
         assertThat(task.getStatus().isCompleted()).isTrue();
-        assertThat(task.getCompletedAt()).isNotNull();
     }
 
     @DisplayName("이미 완료된 Task에 다시 완료 처리를 시도하면 예외 발생")
@@ -109,26 +107,24 @@ public class TaskTest {
                 .hasMessage("이미 완료된 Task는 완료 처리할 수 없습니다.");
     }
 
-    @DisplayName("Task 완료 해제 시 완료 해제 상태가 되고 완료 시간이 null 값으로 초기화된다.")
+    @DisplayName("Task 완료 해제 시 완료 해제 상태가 된다.")
     @Test
     void incompleteTask() {
         var task = new Task(todo, "task");
         task.complete();
         assertThat(task.getStatus().isCompleted()).isTrue();
-        assertThat(task.getCompletedAt()).isNotNull();
 
         task.incomplete();
         assertThat(task.getStatus().isCompleted()).isFalse();
-        assertThat(task.getCompletedAt()).isNull();
     }
 
-    @DisplayName("완료되지 않은 Task에 완료 해제 처리를 시도하면 예외 발생")
+    @DisplayName("완료되지 않은 Task에 완료 해제를 시도하면 예외 발생")
     @Test
     void incompleteWithIncompletedTask() {
         var task = new Task(todo, "task");
 
         assertThatThrownBy(task::incomplete)
                 .isInstanceOf(IllegalStateException.class)
-                .hasMessage("완료되지 않은 Task는 해제할 수 없습니다.");
+                .hasMessage("완료되지 않은 Task는 완료 해제할 수 없습니다.");
     }
 }
