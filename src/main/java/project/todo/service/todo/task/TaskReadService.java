@@ -37,7 +37,7 @@ public class TaskReadService {
         var tasks = taskRepository.findAllByTodoId(todo.getId());
 
         if (tasks.isEmpty()) {
-            throw new EntityNotFoundException("해당 Todo에 대한 Task가 존재하지 않습니다.");
+            return List.of();
         }
 
         return tasks;
