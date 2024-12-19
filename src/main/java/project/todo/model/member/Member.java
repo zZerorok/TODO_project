@@ -1,7 +1,12 @@
 package project.todo.model.member;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
 @Entity
 public class Member {
     public static final int MAX_LENGTH = 10;
@@ -10,9 +15,6 @@ public class Member {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-
-    protected Member() {
-    }
 
     public Member(String name) {
         validateName(name);
@@ -28,13 +30,5 @@ public class Member {
         if (MAX_LENGTH < name.length()) {
             throw new IllegalArgumentException("이름은 10자를 초과할 수 없습니다.");
         }
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
     }
 }
