@@ -8,7 +8,6 @@ import project.todo.model.member.Member;
 import project.todo.model.todo.Todo;
 import project.todo.repository.member.MemberRepository;
 import project.todo.repository.todo.TodoRepository;
-import project.todo.repository.todo.task.TaskRepository;
 import project.todo.service.todo.dto.TodoCreateRequest;
 import project.todo.service.todo.dto.TodoUpdateRequest;
 
@@ -16,7 +15,6 @@ import project.todo.service.todo.dto.TodoUpdateRequest;
 @Transactional
 @Service
 public class TodoWriteService {
-    private final TaskRepository taskRepository;
     private final MemberRepository memberRepository;
     private final TodoRepository todoRepository;
 
