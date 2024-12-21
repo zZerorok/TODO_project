@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
@@ -26,7 +25,7 @@ public class Todo {
     private TodoStatus status;
 
     public Todo(Long memberId, String title, LocalDate deadline) {
-        this(memberId, title, deadline.atTime(LocalTime.MAX), LocalDateTime.now());
+        this(memberId, title, deadline.atTime(23, 59, 59), LocalDateTime.now());
     }
 
     public Todo(Long memberId, String title, LocalDateTime deadline, LocalDateTime createdAt) {
@@ -64,7 +63,7 @@ public class Todo {
         }
 
         if (deadline != null) {
-            this.deadline = deadline.atTime(LocalTime.MAX);
+            this.deadline = deadline.atTime(23, 59, 59);
         }
     }
 
