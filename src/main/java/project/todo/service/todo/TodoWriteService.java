@@ -59,6 +59,7 @@ public class TodoWriteService {
     public void delete(Long todoId) {
         var todo = getTodo(todoId);
 
+        taskRepository.deleteAllByTodoId(todo.getId());
         todoRepository.delete(todo);
     }
 
