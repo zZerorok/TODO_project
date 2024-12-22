@@ -65,6 +65,7 @@ class TodoReadServiceTest {
     @Test
     void findTodos() {
         var member = memberRepository.findAll().get(0);
+
         var todos = todoReadService.findTodos(member.getId());
 
         assertThat(todos).hasSize(3);
@@ -85,14 +86,16 @@ class TodoReadServiceTest {
     @Test
     void getTodoDetail() {
         var todo = todoRepository.findAll().get(0);
-        var tasks = List.of(
-                new Task(todo, "task1"),
-                new Task(todo, "task2"),
-                new Task(todo, "task3")
+        taskRepository.saveAll(
+                List.of(
+                        new Task(todo, "task1"),
+                        new Task(todo, "task2"),
+                        new Task(todo, "task3")
+                )
         );
-        taskRepository.saveAll(tasks);
 
         var getTodoWithTasks = todoReadService.getTodoWithTasks(todo.getId());
+
         assertThat(getTodoWithTasks.todoId()).isEqualTo(todo.getId());
         assertThat(getTodoWithTasks.tasks()).hasSize(3);
     }
