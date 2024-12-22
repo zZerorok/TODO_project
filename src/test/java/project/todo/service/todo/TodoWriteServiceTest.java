@@ -173,4 +173,17 @@ class TodoWriteServiceTest {
         var deletedTodo = todoRepository.findById(todo.getId());
         assertThat(deletedTodo).isEmpty();
     }
+
+    @DisplayName("Todo를 삭제하면 포함된 Task도 전부 삭제된다.")
+    @Test
+    void deleteTodoWithTasks() {
+        var todo = todoRepository.findAll().get(0);
+
+        todoWriteService.delete(todo.getId());
+
+        var deletedTodo = todoRepository.findById(todo.getId());
+        var deletedTasks = taskRepository.findAllByTodoId(todo.getId());
+        assertThat(deletedTodo).isEmpty();
+        assertThat(deletedTasks).isEmpty();
+    }
 }
