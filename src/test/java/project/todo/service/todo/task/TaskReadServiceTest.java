@@ -44,12 +44,14 @@ class TaskReadServiceTest {
     @Test
     void findTasks() {
         var todo = todoRepository.findAll().get(0);
-        var tasks = List.of(
-                new Task(todo, "task1"),
-                new Task(todo, "task2"),
-                new Task(todo, "task3")
+        taskRepository.saveAll(
+                List.of(
+                        new Task(todo, "task1"),
+                        new Task(todo, "task2"),
+                        new Task(todo, "task3")
+                )
         );
-        taskRepository.saveAll(tasks);
+
         var getTasks = taskReadService.findTasks(todo.getId());
 
         assertThat(getTasks).hasSize(3);
@@ -62,6 +64,7 @@ class TaskReadServiceTest {
     @Test
     void findTasksWithEmptyTask() {
         var todoId = todoRepository.findAll().get(0).getId();
+
         var tasks = taskReadService.findTasks(todoId);
 
         assertThat(tasks).isEmpty();
