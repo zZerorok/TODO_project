@@ -25,7 +25,7 @@ public class TodoReadService {
 
     public List<TodoSimpleResponse> findTodos(Long memberId) {
         var member = getMember(memberId);
-        var todos = getTodos(member);
+        var todos = getTodos(member.getId());
 
         return todos.stream()
                 .map(TodoSimpleResponse::from)
@@ -47,14 +47,8 @@ public class TodoReadService {
                 .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
     }
 
-    private List<Todo> getTodos(Member member) {
-        var todos = todoRepository.findAllByMemberId(member.getId());
-
-        if (todos.isEmpty()) {
-            throw new EntityNotFoundException("작성하신 Todo가 없습니다.");
-        }
-
-        return todos;
+    private List<Todo> getTodos(long memberId) {
+        return todoRepository.findAllByMemberId(memberId);
     }
 
     private Todo getTodo(long todoId) {
