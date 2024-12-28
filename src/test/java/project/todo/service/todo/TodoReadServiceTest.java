@@ -69,6 +69,55 @@ class TodoReadServiceTest {
         assertThat(todos).hasSize(3);
     }
 
+    @DisplayName("사용자가 작성한 Todo 중 완료된 Todo만 조회할 수 있다.")
+    @Test
+    void findCompleteTodos() {
+        var todo1 = todoRepository.findAll().get(0);
+        todo1.complete();
+        todoRepository.save(todo1);
+
+        var completeTodos = todoReadService.findCompleteTodos(todo1.getMemberId());
+
+        assertThat(completeTodos).hasSize(1);
+        assertThat(completeTodos.get(0).status().isCompleted()).isTrue();
+    }
+
+    @DisplayName("완료된 Todo 조회 시 완료된 Todo가 없으면 빈 리스트를 반환한다.")
+    @Test
+    void findCompleteTodosWithEmpty() {
+        var member = memberRepository.findAll().get(0);
+
+        var completeTodos = todoReadService.findCompleteTodos(member.getId());
+
+        assertThat(completeTodos).isEmpty();
+    }
+
+    @DisplayName("사용자가 작성한 Todo 중 미완료된 Todo만 조회할 수 있다.")
+    @Test
+    void findIncompleteTodos() {
+        var todo1 = todoRepository.findAll().get(0);
+        todo1.complete();
+        todoRepository.save(todo1);
+
+        var incompleteTodos = todoReadService.findIncompleteTodos(todo1.getMemberId());
+
+        assertThat(incompleteTodos).hasSize(2);
+        assertThat(incompleteTodos.get(0).status().isCompleted()).isFalse();
+    }
+
+    @DisplayName("미완료된 Todo 조회 시 미완료된 Todo가 없으면 빈 리스트를 반환한다.")
+    @Test
+    void findIncompleteTodosWithEmpty() {
+        var todos = todoRepository.findAll();
+        todos.forEach(Todo::complete);
+        todoRepository.saveAll(todos);
+        var member = memberRepository.findAll().get(0);
+
+        var incompleteTodos = todoReadService.findIncompleteTodos(member.getId());
+
+        assertThat(incompleteTodos).isEmpty();
+    }
+
     @DisplayName("Todo를 상세 조회 하면 포함된 Task도 출력된다.")
     @Test
     void getTodoDetail() {
