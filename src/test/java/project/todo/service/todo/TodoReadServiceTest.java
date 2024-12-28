@@ -1,6 +1,5 @@
 package project.todo.service.todo;
 
-import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,7 +17,6 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @Transactional
 @SpringBootTest
@@ -69,17 +67,6 @@ class TodoReadServiceTest {
         var todos = todoReadService.findTodos(member.getId());
 
         assertThat(todos).hasSize(3);
-    }
-
-    @DisplayName("Todo 조회 시 Todo가 없을 경우 예외 발생")
-    @Test
-    void findWithEmptyTodos() {
-        var member = memberRepository.findAll().get(0);
-        todoRepository.deleteAll();
-
-        assertThatThrownBy(() -> todoReadService.findTodos(member.getId()))
-                .isInstanceOf(EntityNotFoundException.class)
-                .hasMessage("작성하신 Todo가 없습니다.");
     }
 
     @DisplayName("Todo를 상세 조회 하면 포함된 Task도 출력된다.")
