@@ -4,9 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import project.todo.service.todo.TodoReadService;
 import project.todo.service.todo.TodoWriteService;
 import project.todo.service.todo.dto.*;
-import project.todo.service.todo.TodoReadService;
 
 import java.util.List;
 
@@ -21,6 +21,18 @@ public class TodoController {
     public ResponseEntity<List<TodoSimpleResponse>> findTodos(@PathVariable Long memberId) {
         var todos = todoReadService.findTodos(memberId);
         return ResponseEntity.ok(todos);
+    }
+
+    @GetMapping("/{memberId}/complete")
+    public ResponseEntity<List<TodoDetailResponse>> findCompleteTodos(@PathVariable Long memberId) {
+        var completeTodos = todoReadService.findCompleteTodos(memberId);
+        return ResponseEntity.ok(completeTodos);
+    }
+
+    @GetMapping("/{memberId}/incomplete")
+    public ResponseEntity<List<TodoDetailResponse>> findIncompleteTodos(@PathVariable Long memberId) {
+        var incompleteTodos = todoReadService.findIncompleteTodos(memberId);
+        return ResponseEntity.ok(incompleteTodos);
     }
 
     @GetMapping("/{todoId}")
