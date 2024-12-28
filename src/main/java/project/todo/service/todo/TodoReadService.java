@@ -10,6 +10,7 @@ import project.todo.model.todo.task.Task;
 import project.todo.repository.member.MemberRepository;
 import project.todo.repository.todo.TodoRepository;
 import project.todo.repository.todo.task.TaskRepository;
+import project.todo.service.todo.dto.TodoDetailResponse;
 import project.todo.service.todo.dto.TodoSimpleResponse;
 import project.todo.service.todo.dto.TodoWithTasksResponse;
 
@@ -30,6 +31,20 @@ public class TodoReadService {
         return todos.stream()
                 .map(TodoSimpleResponse::from)
                 .toList();
+    }
+
+    public List<TodoDetailResponse> findCompleteTodos(Long memberId) {
+        var member = getMember(memberId);
+        var todos = getTodos(member.getId());
+
+        return getTodosByCompletionStatus(todos, true);
+    }
+
+    public List<TodoDetailResponse> findIncompleteTodos(Long memberId) {
+        var member = getMember(memberId);
+        var todos = getTodos(member.getId());
+
+        return getTodosByCompletionStatus(todos, false);
     }
 
     public TodoWithTasksResponse getTodoWithTasks(Long todoId) {
@@ -64,5 +79,12 @@ public class TodoReadService {
         }
 
         return tasks;
+    }
+
+    private List<TodoDetailResponse> getTodosByCompletionStatus(List<Todo> todos, boolean completed) {
+        return todos.stream()
+                .filter(todo -> todo.getStatus().isCompleted() == completed)
+                .map(TodoDetailResponse::from)
+                .toList();
     }
 }
