@@ -27,4 +27,14 @@ public class MemberController {
         Member savedMember = memberService.save(request);
         return "redirect:/member/hello?name=" + savedMember.getName();
     }
+
+    @GetMapping("/register-form")
+    public String registerForm() {
+        return "members/register-form";
+    }
+
+    @GetMapping("/login-form")
+    public String loginForm() {
+        return "members/login-form";
+    }
 }
