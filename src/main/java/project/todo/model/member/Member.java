@@ -30,7 +30,7 @@ public class Member {
     }
 
     public Member(String name, String loginId, String password, String email, LocalDateTime createdAt) {
-        validateName(name);
+        validateLength(name);
 
         this.name = name;
         this.loginId = loginId;
@@ -39,11 +39,7 @@ public class Member {
         this.createdAt = createdAt;
     }
 
-    private void validateName(String name) {
-        if (name == null || name.isBlank()) {
-            throw new IllegalArgumentException("이름을 입력해주세요.");
-        }
-
+    private void validateLength(String name) {
         if (MAX_LENGTH < name.length()) {
             throw new IllegalArgumentException("이름은 10자를 초과할 수 없습니다.");
         }
