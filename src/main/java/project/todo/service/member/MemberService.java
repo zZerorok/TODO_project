@@ -20,4 +20,10 @@ public class MemberService {
 
         memberRepository.save(member);
     }
+
+    public Member login(MemberLoginRequest request) {
+        return memberRepository.findByLoginId(request.loginId())
+                .filter(it -> it.getPassword().equals(request.password()))
+                .orElse(null);
+    }
 }
