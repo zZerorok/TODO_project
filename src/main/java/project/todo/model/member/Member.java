@@ -44,4 +44,10 @@ public class Member {
             throw new IllegalArgumentException("이름은 10자를 초과할 수 없습니다.");
         }
     }
+
+    public void validatePassword(String password) {
+        if (!this.password.equals(password)) {
+            throw new IllegalArgumentException("로그인 정보가 일치하지 않습니다.");
+        }
+    }
 }
