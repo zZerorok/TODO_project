@@ -11,6 +11,10 @@ public class MemberService {
     private final MemberRepository memberRepository;
 
     public void register(MemberCreateRequest request) {
+        if (memberRepository.existsByLoginId(request.loginId())) {
+            throw new IllegalStateException("이미 존재하는 아이디 입니다.");
+        }
+
         var member = new Member(
                 request.name(),
                 request.loginId(),
@@ -19,11 +23,5 @@ public class MemberService {
         );
 
         memberRepository.save(member);
-    }
-
-    public Member login(MemberLoginRequest request) {
-        return memberRepository.findByLoginId(request.loginId())
-                .filter(it -> it.getPassword().equals(request.password()))
-                .orElse(null);
     }
 }
