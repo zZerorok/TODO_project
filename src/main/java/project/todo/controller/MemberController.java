@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import project.todo.model.member.Member;
+import project.todo.service.member.LoginService;
 import project.todo.service.member.MemberCreateRequest;
 import project.todo.service.member.MemberLoginRequest;
 import project.todo.service.member.MemberService;
@@ -23,6 +24,7 @@ import project.todo.service.member.MemberService;
 @Controller
 public class MemberController {
     private final MemberService memberService;
+    private final LoginService loginService;
 
     @GetMapping("/hello")
     public String hello(HttpServletRequest httpRequest,
@@ -86,7 +88,8 @@ public class MemberController {
             return "members/login-form";
         }
 
-        var loginMember = memberService.login(loginRequest);
+        var loginMember = loginService.login(loginRequest);
+
         HttpSession session = httpRequest.getSession();
         session.setAttribute("loginMember", loginMember);
 
