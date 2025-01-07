@@ -2,7 +2,7 @@ package project.todo.service.member;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import project.todo.model.member.LoginMember;
+import project.todo.service.security.LoginMember;
 import project.todo.repository.member.MemberRepository;
 
 @RequiredArgsConstructor

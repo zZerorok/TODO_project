@@ -1,4 +1,6 @@
-package project.todo.model.member;
+package project.todo.service.security;
+
+import project.todo.model.member.Member;
 
 public record LoginMember(
         Long id,
