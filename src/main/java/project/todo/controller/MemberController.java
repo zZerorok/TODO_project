@@ -1,7 +1,5 @@
 package project.todo.controller;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,11 +10,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import project.todo.model.member.Member;
 import project.todo.service.member.LoginService;
 import project.todo.service.member.MemberCreateRequest;
 import project.todo.service.member.MemberLoginRequest;
 import project.todo.service.member.MemberService;
+import project.todo.service.security.SessionHolder;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -25,22 +23,16 @@ import project.todo.service.member.MemberService;
 public class MemberController {
     private final MemberService memberService;
     private final LoginService loginService;
+    private final SessionHolder sessionHolder;
 
     @GetMapping("/home")
-    public String hello(HttpServletRequest httpRequest,
-                        Model model
-    ) {
-        HttpSession session = httpRequest.getSession(false);
-        if (session == null) {
+    public String hello(Model model) {
+        var member = sessionHolder.getSession();
+        if (member == null) {
             return "redirect:members/login-form";
         }
 
-        var loginMember = (Member) session.getAttribute("loginMember");
-        if (loginMember == null) {
-            return "redirect:members/login-form";
-        }
-
-        model.addAttribute("loginMember", loginMember);
+        model.addAttribute("loginMember", member);
         return "members/home";
     }
 
@@ -81,7 +73,6 @@ public class MemberController {
     @PostMapping("/login")
     public String login(@Valid @ModelAttribute("loginForm") MemberLoginRequest loginRequest,
                         BindingResult bindingResult,
-                        HttpServletRequest httpRequest,
                         Model model
     ) {
         if (bindingResult.hasErrors()) {
@@ -89,15 +80,12 @@ public class MemberController {
         }
 
         var loginMember = loginService.login(loginRequest);
-
-        HttpSession session = httpRequest.getSession();
-        session.setAttribute("loginMember", loginMember);
-
         if (loginMember == null) {
             bindingResult.reject("loginFail", "아이디 또는 비밀번호가 맞지 않습니다.");
             return "members/login-form";
         }
 
+        sessionHolder.setSession(loginMember);
         model.addAttribute("loginMember", loginMember);
         return "members/home";
     }
