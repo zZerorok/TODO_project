@@ -26,7 +26,7 @@ public class MemberController {
     private final MemberService memberService;
     private final LoginService loginService;
 
-    @GetMapping("/hello")
+    @GetMapping("/home")
     public String hello(HttpServletRequest httpRequest,
                         Model model
     ) {
@@ -41,7 +41,7 @@ public class MemberController {
         }
 
         model.addAttribute("loginMember", loginMember);
-        return "hello";
+        return "members/home";
     }
 
     @GetMapping("/register-form")
@@ -99,6 +99,6 @@ public class MemberController {
         }
 
         model.addAttribute("loginMember", loginMember);
-        return "hello";
+        return "members/home";
     }
 }
