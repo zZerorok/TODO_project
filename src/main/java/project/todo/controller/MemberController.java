@@ -89,4 +89,10 @@ public class MemberController {
         model.addAttribute("loginMember", loginMember);
         return "members/home";
     }
+
+    @GetMapping("/logout")
+    public String logout() {
+        sessionHolder.removeSession();
+        return "redirect:/";
+    }
 }
