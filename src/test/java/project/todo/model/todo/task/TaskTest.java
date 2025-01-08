@@ -10,6 +10,7 @@ import project.todo.exception.todo.DeadlineExceededException;
 import project.todo.model.todo.Todo;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -17,6 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 public class TaskTest {
     private Todo todo;
+    private Task task;
 
     @BeforeEach
     void setUp() {
@@ -24,6 +26,11 @@ public class TaskTest {
                 1L,
                 "todo",
                 LocalDate.of(2025, 12, 1)
+        );
+
+        task = new Task(
+                todo,
+                "task"
         );
     }
 
@@ -47,9 +54,16 @@ public class TaskTest {
     @DisplayName("Task 생성 시 마감일을 초과한 경우 예외 발생")
     @Test
     void initTaskWithExceedingDeadline() {
-        var exceedDeadline = LocalDate.of(2025, 12, 2).atStartOfDay();
+        var exceedDeadline = LocalDate.of(2025, 12, 2)
+                .atTime(LocalTime.MIN);
 
-        assertThatThrownBy(() -> new Task(todo, "task", exceedDeadline))
+        assertThatThrownBy(() -> {
+            new Task(
+                    todo,
+                    "task",
+                    exceedDeadline
+            );
+        })
                 .isInstanceOf(DeadlineExceededException.class)
                 .hasMessage("마감일이 초과되어 Task를 생성할 수 없습니다.");
     }
@@ -57,10 +71,10 @@ public class TaskTest {
     @DisplayName("Task 내용을 수정할 수 있다.")
     @Test
     void updateTask() {
-        var task = new Task(todo, "task");
         assertThat(task.getContent()).isEqualTo("task");
 
         task.update("new task");
+
         assertThat(task.getContent()).isEqualTo("new task");
     }
 
@@ -68,17 +82,15 @@ public class TaskTest {
     @NullAndEmptySource
     @ParameterizedTest(name = "Task 내용 수정 시 내용이 공백이면 예외 발생")
     void updateWithEmptyContent(String input) {
-        var task = new Task(todo, "task");
 
         assertThatThrownBy(() -> task.update(input))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("내용은 공백일 수 없습니다.");
     }
 
-    @DisplayName("이미 완료된 Task 수정 시 예외 발생")
+    @DisplayName("Task 수정 시 완료 상태면 예외 발생")
     @Test
     void updateWithAlreadyCompletedTask() {
-        var task = new Task(todo, "task");
         task.complete();
 
         assertThatThrownBy(() -> task.update("new task"))
@@ -86,20 +98,19 @@ public class TaskTest {
                 .hasMessage("이미 완료된 Task는 수정할 수 없습니다.");
     }
 
-    @DisplayName("Task 완료 시 완료 상태가 갱신된다.")
+    @DisplayName("Task 완료 후 완료 상태로 변경된다.")
     @Test
     void completeTask() {
-        var task = new Task(todo, "task");
         assertThat(task.getStatus().isCompleted()).isFalse();
 
         task.complete();
+
         assertThat(task.getStatus().isCompleted()).isTrue();
     }
 
-    @DisplayName("이미 완료된 Task에 다시 완료 처리를 시도하면 예외 발생")
+    @DisplayName("완료된 Task에 완료를 시도하면 예외 발생")
     @Test
     void completeWithAlreadyCompletedTask() {
-        var task = new Task(todo, "task");
         task.complete();
 
         assertThatThrownBy(task::complete)
@@ -107,10 +118,9 @@ public class TaskTest {
                 .hasMessage("이미 완료된 Task는 완료 처리할 수 없습니다.");
     }
 
-    @DisplayName("Task 완료 해제 시 완료 해제 상태가 된다.")
+    @DisplayName("Task 완료 해제 후 완료 해제 상태로 변경된다.")
     @Test
     void incompleteTask() {
-        var task = new Task(todo, "task");
         task.complete();
         assertThat(task.getStatus().isCompleted()).isTrue();
 
@@ -121,7 +131,6 @@ public class TaskTest {
     @DisplayName("완료되지 않은 Task에 완료 해제를 시도하면 예외 발생")
     @Test
     void incompleteWithIncompletedTask() {
-        var task = new Task(todo, "task");
 
         assertThatThrownBy(task::incomplete)
                 .isInstanceOf(IllegalStateException.class)
