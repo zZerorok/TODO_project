@@ -56,7 +56,7 @@ class TodoTest {
                 .hasMessage("제목은 공백일 수 없습니다.");
     }
 
-    @DisplayName("Todo 생성 시 null 입력하면 예외 발생")
+    @DisplayName("Todo 생성 시 마감일이 비어있으면 예외 발생")
     @Test
     void initTodoWithEmptyDeadline() {
 
@@ -75,52 +75,43 @@ class TodoTest {
     @DisplayName("Todo 생성 시 마감일이 현재보다 과거일 경우 예외 발생")
     @Test
     void initTodoWithPastDeadline() {
-        var deadline = LocalDate.of(2024, 12, 1);
 
         assertThatThrownBy(() -> {
             new Todo(
                     1L,
                     "프로젝트",
-                    deadline
+                    LocalDate.of(2024, 12, 1)
             );
         })
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("마감일은 현재보다 과거일 수 없습니다.");
     }
 
-    @DisplayName("Todo의 제목을 변경할 수 있다.")
+    @DisplayName("Todo 제목을 수정할 수 있다.")
     @Test
     void updateTitle() {
-        var deadline = LocalDate.of(2025, 12, 1)
-                .atTime(LocalTime.MAX);
         assertThat(todo.getTitle()).isEqualTo("프로젝트");
-        assertThat(todo.getDeadline()).isEqualTo(deadline);
 
-        todo.update(
-                "최종 프로젝트",
-                null
-        );
+        todo.update("최종 프로젝트", null);
+
         assertThat(todo.getTitle()).isEqualTo("최종 프로젝트");
-        assertThat(todo.getDeadline()).isEqualTo(deadline);
     }
 
-    @DisplayName("Todo의 마감일을 변경할 수 있다.")
+    @DisplayName("Todo 마감일을 수정할 수 있다.")
     @Test
     void updateDeadline() {
-        var beforeDeadline = LocalDate.of(2025, 12, 1).atTime(LocalTime.MAX);
-        assertThat(todo.getTitle()).isEqualTo("프로젝트");
+        var beforeDeadline = LocalDate.of(2025, 12, 1)
+                .atTime(LocalTime.MAX);
         assertThat(todo.getDeadline()).isEqualTo(beforeDeadline);
 
         var newDeadline = LocalDate.of(2025, 12, 2);
-        todo.update(
-                null,
-                newDeadline
-        );
-        assertThat(todo.getTitle()).isEqualTo("프로젝트");
-        assertThat(todo.getDeadline()).isEqualTo(newDeadline.atTime(LocalTime.MAX));
+        var afterDeadline = newDeadline.atTime(LocalTime.MAX);
+        todo.update(null, newDeadline);
+
+        assertThat(todo.getDeadline()).isEqualTo(afterDeadline);
     }
 
-    @DisplayName("Todo의 제목과 마감일을 한 번에 변경할 수 있다.")
+    @DisplayName("Todo 제목과 마감일을 한 번에 수정할 수 있다.")
     @Test
     void updateTitleAndDeadline() {
         var beforeDeadline = LocalDate.of(2025, 12, 1)
@@ -129,24 +120,19 @@ class TodoTest {
         assertThat(todo.getDeadline()).isEqualTo(beforeDeadline);
 
         var newDeadline = LocalDate.of(2025, 12, 2);
-        todo.update(
-                "최종 프로젝트",
-                newDeadline
-        );
+        todo.update("최종 프로젝트", newDeadline);
+
         assertThat(todo.getTitle()).isEqualTo("최종 프로젝트");
         assertThat(todo.getDeadline()).isEqualTo(newDeadline.atTime(LocalTime.MAX));
     }
 
-    @DisplayName("이미 완료된 Todo를 수정할 때 예외 발생")
+    @DisplayName("이미 완료된 Todo 수정 시 예외 발생")
     @Test
     void updateWithAlreadyCompletedTodo() {
         todo.complete();
 
         assertThatThrownBy(() -> {
-            todo.update(
-                    "프로젝트2",
-                    LocalDate.of(2025, 1, 1)
-            );
+            todo.update("프로젝트2", LocalDate.of(2025, 1, 1));
         })
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("이미 완료된 Todo는 수정할 수 없습니다.");
@@ -157,7 +143,8 @@ class TodoTest {
     void updateWithExceedingDeadline() {
         var deadline = LocalDate.of(2024, 2, 1)
                 .atTime(LocalTime.MAX);
-        var createdAt = LocalDateTime.of(2024, 1, 1, 0, 0, 0);
+        var createdAt = LocalDate.of(2024, 1, 1)
+                .atTime(LocalTime.MIN);
         var newTodo = new Todo(
                 1L,
                 "프로젝트",
@@ -166,35 +153,35 @@ class TodoTest {
         );
 
         assertThatThrownBy(() -> {
-            newTodo.update(
-                    "최종 프로젝트",
-                    LocalDate.of(2025, 1, 1)
-            );
+            newTodo.update("최종 프로젝트", LocalDate.of(2025, 1, 1));
         })
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("마감일이 초과되어 수정할 수 없습니다.");
     }
 
-    @DisplayName("Todo 수정 시 아무 값도 없을 경우 수정되지 않는다.")
+    @DisplayName("Todo 수정 시 값이 없으면 Todo는 수정되지 않는다.")
     @Test
     void updateWithNothing() {
         var beforeDeadline = todo.getDeadline();
         var beforeTitle = todo.getTitle();
+
         todo.update(null, null);
 
         assertThat(todo.getTitle()).isEqualTo(beforeTitle);
         assertThat(todo.getDeadline()).isEqualTo(beforeDeadline);
     }
 
-    @DisplayName("Todo 완료 시 완료 상태가 갱신된다")
+    @DisplayName("Todo 완료 후 완료 상태로 변경된다.")
     @Test
     void completeTodo() {
+        assertThat(todo.getStatus().isCompleted()).isFalse();
+
         todo.complete();
 
         assertThat(todo.getStatus().isCompleted()).isTrue();
     }
 
-    @DisplayName("이미 완료된 Todo에 다시 완료 처리를 시도하면 예외 발생")
+    @DisplayName("완료된 Todo에 완료를 시도하면 예외 발생")
     @Test
     void completeWithAlreadyCompletedTodo() {
         todo.complete();
@@ -204,16 +191,18 @@ class TodoTest {
                 .hasMessage("이미 완료된 Todo는 완료 처리할 수 없습니다.");
     }
 
-    @DisplayName("Todo 완료 해제 시 완료 해제 상태가 된다.")
+    @DisplayName("Todo 완료 해제 후 완료 해제 상태로 변경된다.")
     @Test
     void incompleteTodo() {
         todo.complete();
+        assertThat(todo.getStatus().isCompleted()).isTrue();
+
         todo.incomplete();
 
         assertThat(todo.getStatus().isCompleted()).isFalse();
     }
 
-    @DisplayName("완료되지 않은 Todo에 완료 해제 처리를 시도하면 예외 발생")
+    @DisplayName("완료되지 않은 Todo에 완료 해제를 시도하면 예외 발생")
     @Test
     void incompleteWithIncompletedTodo() {
 
