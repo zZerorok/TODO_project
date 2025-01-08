@@ -29,7 +29,7 @@ public class MemberController {
     public String hello(Model model) {
         var member = sessionHolder.getSession();
         if (member == null) {
-            return "redirect:members/login-form";
+            return "redirect:/members/login-form";
         }
 
         model.addAttribute("loginMember", member);
