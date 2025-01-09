@@ -2,38 +2,54 @@ package project.todo.model.member;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.NullAndEmptySource;
-import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 class MemberTest {
 
-    @DisplayName("이름을 입력받으면 새로운 Member 객체가 생성된다.")
+    @DisplayName("주어진 값으로 새로운 Member 객체가 생성된다.")
     @Test
     void initMember() {
 
-        assertDoesNotThrow(() -> new Member("사용자"));
+        assertDoesNotThrow(() -> {
+            new Member(
+                    "사용자",
+                    "loginId",
+                    "password123",
+                    "test@example.com"
+            );
+        });
     }
 
-    @ValueSource(strings = {" ", "   "})
-    @NullAndEmptySource
-    @ParameterizedTest(name = "객체 생성 시 공백이면 예외 발생")
-    void initMemberWithEmptyName(String name) {
-
-        assertThatThrownBy(() -> new Member(name))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("이름을 입력해주세요.");
-    }
-
-    @DisplayName("객체 생성 시 이름이 10자를 초과하면 예외 발생")
+    @DisplayName("Member 생성 시 이름이 10자를 초과하면 예외 발생")
     @Test
     void initMemberWithExceedingLength() {
 
-        assertThatThrownBy(() -> new Member("A".repeat(11)))
+        assertThatThrownBy(() -> {
+            new Member(
+                    "A".repeat(11),
+                    "loginId",
+                    "password123",
+                    "test@example.com"
+            );
+        })
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("이름은 10자를 초과할 수 없습니다.");
+    }
+
+    @DisplayName("주어진 비밀번호와 회원의 비밀번호가 일치하지 않으면 예외를 발생")
+    @Test
+    void validatePassword() {
+        var member = new Member(
+                "사용자",
+                "loginId",
+                "password123",
+                "test@example.com"
+        );
+
+        assertThatThrownBy(() -> member.validatePassword("password"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("로그인 정보가 일치하지 않습니다.");
     }
 }
