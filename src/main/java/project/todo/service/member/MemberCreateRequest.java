@@ -17,4 +17,10 @@ public record MemberCreateRequest(
         @Email(message = "이메일 형식이 올바르지 않습니다.")
         String email
 ) {
+    public static final MemberCreateRequest EMPTY = new MemberCreateRequest(
+            null,
+            null,
+            null,
+            null
+    );
 }

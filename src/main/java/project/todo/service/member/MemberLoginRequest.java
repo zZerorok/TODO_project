@@ -9,4 +9,8 @@ public record MemberLoginRequest(
         @NotEmpty(message = "비밀번호를 입력해주세요.")
         String password
 ) {
+    public static final MemberLoginRequest EMPTY = new MemberLoginRequest(
+            null,
+            null
+    );
 }
