@@ -38,13 +38,7 @@ public class MemberController {
 
     @GetMapping("/register-form")
     public String registerForm(Model model) {
-        var registerForm = new MemberCreateRequest(
-                null,
-                null,
-                null,
-                null
-        );
-        model.addAttribute("form", registerForm);
+        model.addAttribute("form", MemberCreateRequest.EMPTY);
         return "members/register-form";
     }
 
@@ -62,11 +56,7 @@ public class MemberController {
 
     @GetMapping("/login-form")
     public String loginForm(Model model) {
-        var loginForm = new MemberLoginRequest(
-                null,
-                null
-        );
-        model.addAttribute("loginForm", loginForm);
+        model.addAttribute("loginForm", MemberLoginRequest.EMPTY);
         return "members/login-form";
     }
 
