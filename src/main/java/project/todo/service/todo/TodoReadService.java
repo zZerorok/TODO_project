@@ -2,49 +2,41 @@ package project.todo.service.todo;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import project.todo.model.member.Member;
+import org.springframework.web.client.HttpClientErrorException;
 import project.todo.model.todo.Todo;
+import project.todo.model.todo.TodoStatus;
 import project.todo.model.todo.task.Task;
-import project.todo.repository.member.MemberRepository;
 import project.todo.repository.todo.TodoRepository;
 import project.todo.repository.todo.task.TaskRepository;
-import project.todo.service.todo.dto.TodoDetailResponse;
-import project.todo.service.todo.dto.TodoSimpleResponse;
+import project.todo.service.security.LoginMember;
+import project.todo.service.security.SessionHolder;
+import project.todo.service.todo.dto.TodoResponse;
 import project.todo.service.todo.dto.TodoWithTasksResponse;
 
 import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 @Service
 public class TodoReadService {
     private final TodoRepository todoRepository;
-    private final MemberRepository memberRepository;
     private final TaskRepository taskRepository;
+    private final SessionHolder sessionHolder;
 
-    public List<TodoSimpleResponse> findTodos(Long memberId) {
-        var member = getMember(memberId);
-        var todos = getTodos(member.getId());
+    public List<TodoResponse> findTodos(Optional<TodoStatus> todoStatus) {
+        var loginMember = getLoginMember();
 
-        return todos.stream()
-                .map(TodoSimpleResponse::from)
-                .toList();
-    }
+        if (todoStatus.isEmpty()) {
+            var todos = getTodos(loginMember.id());
+            return toResponse(todos);
+        }
 
-    public List<TodoDetailResponse> findCompleteTodos(Long memberId) {
-        var member = getMember(memberId);
-        var todos = getTodos(member.getId());
-
-        return getTodosByCompletionStatus(todos, true);
-    }
-
-    public List<TodoDetailResponse> findIncompleteTodos(Long memberId) {
-        var member = getMember(memberId);
-        var todos = getTodos(member.getId());
-
-        return getTodosByCompletionStatus(todos, false);
+        var todosByStatus = getTodosByStatus(loginMember.id(), todoStatus.get());
+        return toResponse(todosByStatus);
     }
 
     public TodoWithTasksResponse getTodoWithTasks(Long todoId) {
@@ -57,13 +49,28 @@ public class TodoReadService {
         );
     }
 
-    private Member getMember(long memberId) {
-        return memberRepository.findById(memberId)
-                .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
+    private LoginMember getLoginMember() {
+        var loginMember = sessionHolder.getSession();
+
+        if (loginMember == null) {
+            throw new HttpClientErrorException(HttpStatus.UNAUTHORIZED, "로그인이 필요합니다.");
+        }
+
+        return loginMember;
     }
 
     private List<Todo> getTodos(long memberId) {
         return todoRepository.findAllByMemberId(memberId);
+    }
+
+    private List<Todo> getTodosByStatus(long memberId, TodoStatus status) {
+        return todoRepository.findByMemberIdAndStatus(memberId, status);
+    }
+
+    private List<TodoResponse> toResponse(List<Todo> todos) {
+        return todos.stream()
+                .map(TodoResponse::from)
+                .toList();
     }
 
     private Todo getTodo(long todoId) {
@@ -79,12 +86,5 @@ public class TodoReadService {
         }
 
         return tasks;
-    }
-
-    private List<TodoDetailResponse> getTodosByCompletionStatus(List<Todo> todos, boolean completed) {
-        return todos.stream()
-                .filter(todo -> todo.getStatus().isCompleted() == completed)
-                .map(TodoDetailResponse::from)
-                .toList();
     }
 }
