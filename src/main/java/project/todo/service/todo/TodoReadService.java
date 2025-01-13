@@ -40,7 +40,8 @@ public class TodoReadService {
     }
 
     public TodoWithTasksResponse getTodoWithTasks(Long todoId) {
-        var todo = getTodo(todoId);
+        var loginMember = getLoginMember();
+        var todo = getTodoWithValidation(todoId, loginMember);
         var tasks = getTasks(todo);
 
         return TodoWithTasksResponse.from(
@@ -73,6 +74,12 @@ public class TodoReadService {
                 .toList();
     }
 
+    private Todo getTodoWithValidation(long todoId, LoginMember loginMember) {
+        var todo = getTodo(todoId);
+        validateTodoOwnership(todo, loginMember);
+        return todo;
+    }
+
     private Todo getTodo(long todoId) {
         return todoRepository.findById(todoId)
                 .orElseThrow(() -> new EntityNotFoundException("해당 Todo가 존재하지 않습니다."));
@@ -86,5 +93,11 @@ public class TodoReadService {
         }
 
         return tasks;
+    }
+
+    private void validateTodoOwnership(Todo todo, LoginMember loginMember) {
+        if (!todo.getMemberId().equals(loginMember.id())) {
+            throw new HttpClientErrorException(HttpStatus.FORBIDDEN, "해당 Todo에 접근 권한이 없습니다.");
+        }
     }
 }
