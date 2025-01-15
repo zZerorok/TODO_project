@@ -96,4 +96,8 @@ public class Task {
             throw new IllegalArgumentException("마감일이 초과되어 " + status.getStatus() + " 처리할 수 없습니다.");
         }
     }
+
+    public void validateMember(long memberId) {
+        todo.validateMember(memberId);
+    }
 }
