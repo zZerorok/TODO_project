@@ -29,25 +29,22 @@ public class TodoReadService {
 
     public List<TodoResponse> findTodos(Optional<TodoStatus> todoStatus) {
         var loginMember = getLoginMember();
+        var todos = getTodos(loginMember);
 
         if (todoStatus.isEmpty()) {
-            var todos = getTodos(loginMember.id());
             return toResponse(todos);
         }
 
-        var todosByStatus = getTodosByStatus(loginMember.id(), todoStatus.get());
+        var todosByStatus = filterByStatus(todos, todoStatus.get());
         return toResponse(todosByStatus);
     }
 
     public TodoWithTasksResponse getTodoWithTasks(Long todoId) {
         var loginMember = getLoginMember();
-        var todo = getTodoWithValidation(todoId, loginMember);
+        var todo = getTodoWithValidation(loginMember, todoId);
         var tasks = getTasks(todo);
 
-        return TodoWithTasksResponse.from(
-                todo,
-                tasks
-        );
+        return TodoWithTasksResponse.from(todo, tasks);
     }
 
     private LoginMember getLoginMember() {
@@ -60,12 +57,14 @@ public class TodoReadService {
         return loginMember;
     }
 
-    private List<Todo> getTodos(long memberId) {
-        return todoRepository.findAllByMemberId(memberId);
+    private List<Todo> getTodos(LoginMember loginMember) {
+        return todoRepository.findAllByMemberId(loginMember.id());
     }
 
-    private List<Todo> getTodosByStatus(long memberId, TodoStatus status) {
-        return todoRepository.findByMemberIdAndStatus(memberId, status);
+    private List<Todo> filterByStatus(List<Todo> todos, TodoStatus todoStatus) {
+        return todos.stream()
+                .filter(todo -> todo.getStatus().equals(todoStatus))
+                .toList();
     }
 
     private List<TodoResponse> toResponse(List<Todo> todos) {
@@ -74,9 +73,9 @@ public class TodoReadService {
                 .toList();
     }
 
-    private Todo getTodoWithValidation(long todoId, LoginMember loginMember) {
+    private Todo getTodoWithValidation(LoginMember loginMember, long todoId) {
         var todo = getTodo(todoId);
-        validateTodoOwnership(todo, loginMember);
+        todo.validateMember(loginMember.id());
         return todo;
     }
 
@@ -86,18 +85,6 @@ public class TodoReadService {
     }
 
     private List<Task> getTasks(Todo todo) {
-        var tasks = taskRepository.findAllByTodoId(todo.getId());
-
-        if (tasks.isEmpty()) {
-            throw new EntityNotFoundException("해당 Todo에 대한 Task가 존재하지 않습니다.");
-        }
-
-        return tasks;
-    }
-
-    private void validateTodoOwnership(Todo todo, LoginMember loginMember) {
-        if (!todo.getMemberId().equals(loginMember.id())) {
-            throw new HttpClientErrorException(HttpStatus.FORBIDDEN, "해당 Todo에 접근 권한이 없습니다.");
-        }
+        return taskRepository.findAllByTodoId(todo.getId());
     }
 }
