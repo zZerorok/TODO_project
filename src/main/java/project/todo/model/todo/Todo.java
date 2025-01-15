@@ -103,4 +103,10 @@ public class Todo {
             throw new IllegalArgumentException("마감일이 초과되어 " + status.getStatus() + " 처리할 수 없습니다.");
         }
     }
+
+    public void validateMember(long memberId) {
+        if (!this.memberId.equals(memberId)) {
+            throw new IllegalArgumentException("사용자 정보가 일치하지 않습니다.");
+        }
+    }
 }
