@@ -37,32 +37,28 @@ public class TodoWriteService {
     }
 
     public void update(Long todoId, TodoUpdateRequest request) {
-        var loginMember = getLoginMember();
-        var todo = getTodo(todoId, loginMember.id());
+        var todo = getTodoWithValidation(todoId);
 
         todo.update(request.title(), request.deadline());
     }
 
     public void complete(Long todoId) {
-        var loginMember = getLoginMember();
-        var tasks = getTasks(todoId);
+        var tasks = getTasksWithValidation(todoId);
 
         if (isAllTasksCompleted(tasks)) {
-            var todo = getTodo(todoId, loginMember.id());
+            var todo = getTodoWithValidation(todoId);
             todo.complete();
         }
     }
 
     public void incomplete(Long todoId) {
-        var loginMember = getLoginMember();
-        var todo = getTodo(todoId, loginMember.id());
+        var todo = getTodoWithValidation(todoId);
 
         todo.incomplete();
     }
 
     public void delete(Long todoId) {
-        var loginMember = getLoginMember();
-        var todo = getTodo(todoId, loginMember.id());
+        var todo = getTodoWithValidation(todoId);
 
         taskRepository.deleteAllByTodoId(todo.getId());
         todoRepository.delete(todo);
@@ -78,19 +74,27 @@ public class TodoWriteService {
         return loginMember;
     }
 
-    private Todo getTodo(long todoId, long memberId) {
-        return todoRepository.findByIdAndMemberId(todoId, memberId)
+    private Todo getTodoWithValidation(long todoId) {
+        var loginMember = getLoginMember();
+        var todo = getTodo(todoId);
+        todo.validateMember(loginMember.id());
+        return todo;
+    }
+
+    private Todo getTodo(long todoId) {
+        return todoRepository.findById(todoId)
                 .orElseThrow(() -> new EntityNotFoundException("해당 Todo가 존재하지 않습니다."));
     }
 
-    private List<Task> getTasks(long todoId) {
-        var tasks = taskRepository.findAllByTodoId(todoId);
-
-        if (tasks.isEmpty()) {
-            throw new IllegalStateException("Task를 생성해주세요.");
-        }
-
+    private List<Task> getTasksWithValidation(long todoId) {
+        var loginMember = getLoginMember();
+        var tasks = getTasks(todoId);
+        tasks.forEach(task -> task.validateMember(loginMember.id()));
         return tasks;
+    }
+
+    private List<Task> getTasks(long todoId) {
+        return taskRepository.findAllByTodoId(todoId);
     }
 
     private boolean isAllTasksCompleted(List<Task> tasks) {
