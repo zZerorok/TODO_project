@@ -31,39 +31,50 @@ public class TodoController {
     }
 
     @GetMapping("/{todoId}")
-    public ResponseEntity<TodoWithTasksResponse> getTodoWithTasks(@PathVariable Long todoId) {
+    public ResponseEntity<TodoWithTasksResponse> getTodoWithTasks(
+            @PathVariable Long todoId
+    ) {
         var todoWithTasks = todoReadService.getTodoWithTasks(todoId);
         return ResponseEntity.ok(todoWithTasks);
     }
 
-    @PostMapping("/{memberId}")
-    public ResponseEntity<Void> create(@PathVariable Long memberId,
-                                       @RequestBody TodoCreateRequest request) {
-        todoWriteService.create(memberId, request);
+    @PostMapping
+    public ResponseEntity<Void> create(
+            @RequestBody TodoCreateRequest request
+    ) {
+        todoWriteService.create(request);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @PutMapping("/{todoId}")
-    public ResponseEntity<Void> update(@PathVariable Long todoId,
-                                       @RequestBody TodoUpdateRequest request) {
+    public ResponseEntity<Void> update(
+            @PathVariable Long todoId,
+            @RequestBody TodoUpdateRequest request
+    ) {
         todoWriteService.update(todoId, request);
         return ResponseEntity.ok().build();
     }
 
     @PatchMapping("/{todoId}/complete")
-    public ResponseEntity<Void> complete(@PathVariable Long todoId) {
+    public ResponseEntity<Void> complete(
+            @PathVariable Long todoId
+    ) {
         todoWriteService.complete(todoId);
         return ResponseEntity.ok().build();
     }
 
     @PatchMapping("/{todoId}/incomplete")
-    public ResponseEntity<Void> incomplete(@PathVariable Long todoId) {
+    public ResponseEntity<Void> incomplete(
+            @PathVariable Long todoId
+    ) {
         todoWriteService.incomplete(todoId);
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{todoId}")
-    public ResponseEntity<Void> delete(@PathVariable Long todoId) {
+    public ResponseEntity<Void> delete(
+            @PathVariable Long todoId
+    ) {
         todoWriteService.delete(todoId);
         return ResponseEntity.noContent().build();
     }
