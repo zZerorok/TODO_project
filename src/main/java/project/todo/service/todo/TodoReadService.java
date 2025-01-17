@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.HttpClientErrorException;
 import project.todo.model.todo.Todo;
-import project.todo.model.todo.TodoStatus;
+import project.todo.model.todo.Status;
 import project.todo.model.todo.task.Task;
 import project.todo.repository.todo.TodoRepository;
 import project.todo.repository.todo.task.TaskRepository;
@@ -27,15 +27,15 @@ public class TodoReadService {
     private final TaskRepository taskRepository;
     private final SessionHolder sessionHolder;
 
-    public List<TodoResponse> findTodos(Optional<TodoStatus> todoStatus) {
+    public List<TodoResponse> findTodos(Optional<Status> status) {
         var loginMember = getLoginMember();
         var todos = getTodos(loginMember);
 
-        if (todoStatus.isEmpty()) {
+        if (status.isEmpty()) {
             return toResponse(todos);
         }
 
-        var todosByStatus = filterByStatus(todos, todoStatus.get());
+        var todosByStatus = filterByStatus(todos, status.get());
         return toResponse(todosByStatus);
     }
 
@@ -61,9 +61,9 @@ public class TodoReadService {
         return todoRepository.findAllByMemberId(loginMember.id());
     }
 
-    private List<Todo> filterByStatus(List<Todo> todos, TodoStatus todoStatus) {
+    private List<Todo> filterByStatus(List<Todo> todos, Status status) {
         return todos.stream()
-                .filter(todo -> todo.getStatus().equals(todoStatus))
+                .filter(todo -> todo.getStatus().equals(status))
                 .toList();
     }
 
