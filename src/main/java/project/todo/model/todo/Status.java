@@ -1,17 +1,17 @@
-package project.todo.model.todo.task;
+package project.todo.model.todo;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Getter
-public enum TaskStatus {
-    COMPLETED("완료"),
+public enum Status {
+    COMPLETE("완료"),
     INCOMPLETE("미완료");
 
     private final String status;
 
     public boolean isCompleted() {
-        return this == COMPLETED;
+        return this == COMPLETE;
     }
 }
