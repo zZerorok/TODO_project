@@ -5,6 +5,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import project.todo.exception.todo.DeadlineExceededException;
+import project.todo.model.todo.Status;
 import project.todo.model.todo.Todo;
 
 import java.time.LocalDateTime;
@@ -25,7 +26,7 @@ public class Task {
     private LocalDateTime createdAt;
 
     @Enumerated(EnumType.STRING)
-    private TaskStatus status;
+    private Status status;
 
     public Task(Todo todo, String content) {
         this(todo, content, LocalDateTime.now());
@@ -38,7 +39,7 @@ public class Task {
         this.todo = todo;
         this.content = content;
         this.createdAt = createdAt;
-        this.status = TaskStatus.INCOMPLETE;
+        this.status = Status.INCOMPLETE;
     }
 
     private void validateContent(String content) {
@@ -72,26 +73,26 @@ public class Task {
     }
 
     public void complete() {
-        checkDeadline(TaskStatus.COMPLETED);
+        checkDeadline(Status.COMPLETE);
 
         if (this.status.isCompleted()) {
             throw new IllegalStateException("이미 완료된 Task는 완료 처리할 수 없습니다.");
         }
 
-        this.status = TaskStatus.COMPLETED;
+        this.status = Status.COMPLETE;
     }
 
     public void incomplete() {
-        checkDeadline(TaskStatus.INCOMPLETE);
+        checkDeadline(Status.INCOMPLETE);
 
         if (!this.status.isCompleted()) {
             throw new IllegalStateException("완료되지 않은 Task는 완료 해제할 수 없습니다.");
         }
 
-        this.status = TaskStatus.INCOMPLETE;
+        this.status = Status.INCOMPLETE;
     }
 
-    private void checkDeadline(TaskStatus status) {
+    private void checkDeadline(Status status) {
         if (this.todo.getDeadline().isBefore(LocalDateTime.now())) {
             throw new IllegalArgumentException("마감일이 초과되어 " + status.getStatus() + " 처리할 수 없습니다.");
         }
