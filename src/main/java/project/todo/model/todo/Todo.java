@@ -23,7 +23,7 @@ public class Todo {
     private LocalDateTime createdAt;
 
     @Enumerated(EnumType.STRING)
-    private TodoStatus status;
+    private Status status;
 
     public Todo(Long memberId, String title, LocalDate deadline) {
         this(memberId, title, deadline.atTime(LocalTime.MAX), LocalDateTime.now());
@@ -37,7 +37,7 @@ public class Todo {
         this.title = title;
         this.deadline = deadline;
         this.createdAt = createdAt;
-        this.status = TodoStatus.INCOMPLETE;
+        this.status = Status.INCOMPLETE;
     }
 
     private void validateTitle(String title) {
@@ -79,26 +79,26 @@ public class Todo {
     }
 
     public void complete() {
-        checkDeadline(TodoStatus.COMPLETED);
+        checkDeadline(Status.COMPLETE);
 
         if (this.status.isCompleted()) {
             throw new IllegalStateException("이미 완료된 Todo는 완료 처리할 수 없습니다.");
         }
 
-        this.status = TodoStatus.COMPLETED;
+        this.status = Status.COMPLETE;
     }
 
     public void incomplete() {
-        checkDeadline(TodoStatus.INCOMPLETE);
+        checkDeadline(Status.INCOMPLETE);
 
         if (!this.status.isCompleted()) {
             throw new IllegalStateException("완료되지 않은 Todo는 해제할 수 없습니다.");
         }
 
-        this.status = TodoStatus.INCOMPLETE;
+        this.status = Status.INCOMPLETE;
     }
 
-    private void checkDeadline(TodoStatus status) {
+    private void checkDeadline(Status status) {
         if (this.deadline.isBefore(LocalDateTime.now())) {
             throw new IllegalArgumentException("마감일이 초과되어 " + status.getStatus() + " 처리할 수 없습니다.");
         }
