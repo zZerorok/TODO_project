@@ -1,7 +1,7 @@
 package project.todo.service.todo.dto;
 
 import project.todo.model.todo.Todo;
-import project.todo.model.todo.TodoStatus;
+import project.todo.model.todo.Status;
 import project.todo.model.todo.task.Task;
 import project.todo.service.todo.task.dto.TaskDetailResponse;
 
@@ -14,7 +14,7 @@ public record TodoWithTasksResponse(
         String title,
         LocalDate deadline,
         LocalDateTime createdAt,
-        TodoStatus status,
+        Status status,
         List<TaskDetailResponse> tasks
 ) {
 
