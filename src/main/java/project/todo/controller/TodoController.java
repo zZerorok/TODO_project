@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import project.todo.model.todo.TodoStatus;
+import project.todo.model.todo.Status;
 import project.todo.service.todo.TodoReadService;
 import project.todo.service.todo.TodoWriteService;
 import project.todo.service.todo.dto.TodoCreateRequest;
@@ -24,9 +24,9 @@ public class TodoController {
 
     @GetMapping
     public ResponseEntity<List<TodoResponse>> findTodos(
-            @RequestParam(required = false) Optional<TodoStatus> todoStatus
+            @RequestParam(required = false) Optional<Status> status
     ) {
-        var todos = todoReadService.findTodos(todoStatus);
+        var todos = todoReadService.findTodos(status);
         return ResponseEntity.ok(todos);
     }
 
