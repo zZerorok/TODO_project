@@ -33,13 +33,17 @@ public class Task {
     }
 
     public Task(Todo todo, String content, LocalDateTime createdAt) {
-        validateContent(content);
-        validateDeadline(todo, createdAt);
+        validateForCreate(todo, content, createdAt);
 
         this.todo = todo;
         this.content = content;
         this.createdAt = createdAt;
         this.status = Status.INCOMPLETE;
+    }
+
+    private void validateForCreate(Todo todo, String content, LocalDateTime createdAt) {
+        validateContent(content);
+        validateDeadline(todo, createdAt);
     }
 
     private void validateContent(String content) {
@@ -93,9 +97,7 @@ public class Task {
     }
 
     private void checkDeadline(Status status) {
-        if (this.todo.getDeadline().isBefore(LocalDateTime.now())) {
-            throw new IllegalArgumentException("마감일이 초과되어 " + status.getStatus() + " 처리할 수 없습니다.");
-        }
+        todo.validateForUpdateStatus(status);
     }
 
     public void validateMember(long memberId) {
