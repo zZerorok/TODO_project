@@ -6,16 +6,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.HttpClientErrorException;
+import project.todo.model.todo.Status;
 import project.todo.model.todo.Todo;
-import project.todo.model.todo.task.Task;
 import project.todo.repository.todo.TodoRepository;
 import project.todo.repository.todo.task.TaskRepository;
 import project.todo.service.security.LoginMember;
 import project.todo.service.security.SessionHolder;
 import project.todo.service.todo.dto.TodoCreateRequest;
 import project.todo.service.todo.dto.TodoUpdateRequest;
-
-import java.util.List;
 
 @RequiredArgsConstructor
 @Transactional
@@ -43,10 +41,9 @@ public class TodoWriteService {
     }
 
     public void complete(Long todoId) {
-        var tasks = getTasksWithValidation(todoId);
+        var todo = getTodoWithValidation(todoId);
 
-        if (isAllTasksCompleted(tasks)) {
-            var todo = getTodoWithValidation(todoId);
+        if (isAllTasksCompleted(todo)) {
             todo.complete();
         }
     }
@@ -86,19 +83,7 @@ public class TodoWriteService {
                 .orElseThrow(() -> new EntityNotFoundException("해당 Todo가 존재하지 않습니다."));
     }
 
-    private List<Task> getTasksWithValidation(long todoId) {
-        var loginMember = getLoginMember();
-        var tasks = getTasks(todoId);
-        tasks.forEach(task -> task.validateMember(loginMember.id()));
-        return tasks;
-    }
-
-    private List<Task> getTasks(long todoId) {
-        return taskRepository.findAllByTodoId(todoId);
-    }
-
-    private boolean isAllTasksCompleted(List<Task> tasks) {
-        return tasks.stream()
-                .allMatch(it -> it.getStatus().isCompleted());
+    private boolean isAllTasksCompleted(Todo todo) {
+        return !taskRepository.existsByTodoAndStatus(todo, Status.INCOMPLETE);
     }
 }
