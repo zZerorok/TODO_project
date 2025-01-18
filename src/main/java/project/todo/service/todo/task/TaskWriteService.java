@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.HttpClientErrorException;
+import project.todo.model.todo.Status;
 import project.todo.model.todo.Todo;
 import project.todo.model.todo.task.Task;
 import project.todo.repository.todo.TodoRepository;
@@ -41,7 +42,7 @@ public class TaskWriteService {
         task.complete();
 
         var todo = getTodoWithValidation(todoId);
-        if (isAllTasksCompleted(todo.getId())) {
+        if (isAllTasksCompleted(todo)) {
             todo.complete();
         }
     }
@@ -96,10 +97,8 @@ public class TaskWriteService {
                 .orElseThrow(() -> new EntityNotFoundException("해당 Task를 찾을 수 없습니다."));
     }
 
-    private boolean isAllTasksCompleted(long todoId) {
-        return taskRepository.findAllByTodoId(todoId)
-                .stream()
-                .allMatch(it -> it.getStatus().isCompleted());
+    private boolean isAllTasksCompleted(Todo todo) {
+        return !taskRepository.existsByTodoAndStatus(todo, Status.INCOMPLETE);
     }
 
     private boolean isCompleted(Todo todo) {
