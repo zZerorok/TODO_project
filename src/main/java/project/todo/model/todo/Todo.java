@@ -30,14 +30,18 @@ public class Todo {
     }
 
     public Todo(Long memberId, String title, LocalDateTime deadline, LocalDateTime createdAt) {
-        validateTitle(title);
-        validateDeadline(deadline, createdAt);
+        validateForCreate(title, deadline, createdAt);
 
         this.memberId = memberId;
         this.title = title;
         this.deadline = deadline;
         this.createdAt = createdAt;
         this.status = Status.INCOMPLETE;
+    }
+
+    private void validateForCreate(String title, LocalDateTime deadline, LocalDateTime createdAt) {
+        validateTitle(title);
+        validateDeadline(deadline, createdAt);
     }
 
     private void validateTitle(String title) {
@@ -79,7 +83,7 @@ public class Todo {
     }
 
     public void complete() {
-        checkDeadline(Status.COMPLETE);
+        validateForUpdateStatus(Status.COMPLETE);
 
         if (this.status.isCompleted()) {
             throw new IllegalStateException("이미 완료된 Todo는 완료 처리할 수 없습니다.");
@@ -89,7 +93,7 @@ public class Todo {
     }
 
     public void incomplete() {
-        checkDeadline(Status.INCOMPLETE);
+        validateForUpdateStatus(Status.INCOMPLETE);
 
         if (!this.status.isCompleted()) {
             throw new IllegalStateException("완료되지 않은 Todo는 해제할 수 없습니다.");
@@ -98,7 +102,7 @@ public class Todo {
         this.status = Status.INCOMPLETE;
     }
 
-    private void checkDeadline(Status status) {
+    public void validateForUpdateStatus(Status status) {
         if (this.deadline.isBefore(LocalDateTime.now())) {
             throw new IllegalArgumentException("마감일이 초과되어 " + status.getStatus() + " 처리할 수 없습니다.");
         }
