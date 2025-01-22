@@ -40,7 +40,18 @@ public class TodoWriteService {
         todo.update(request.title(), request.deadline());
     }
 
-    public void complete(Long todoId) {
+    public void updateStatus(Long todoId, Status status) {
+
+        if (status == Status.COMPLETE) {
+            complete(todoId);
+        }
+
+        if (status == Status.INCOMPLETE) {
+            incomplete(todoId);
+        }
+    }
+
+    private void complete(Long todoId) {
         var todo = getTodoWithValidation(todoId);
 
         if (isAllTasksCompleted(todo)) {
@@ -48,7 +59,7 @@ public class TodoWriteService {
         }
     }
 
-    public void incomplete(Long todoId) {
+    private void incomplete(Long todoId) {
         var todo = getTodoWithValidation(todoId);
 
         todo.incomplete();
