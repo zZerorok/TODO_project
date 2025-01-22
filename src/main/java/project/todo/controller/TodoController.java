@@ -55,19 +55,12 @@ public class TodoController {
         return ResponseEntity.ok().build();
     }
 
-    @PatchMapping("/{todoId}/complete")
-    public ResponseEntity<Void> complete(
-            @PathVariable Long todoId
+    @PatchMapping("/{todoId}/status")
+    public ResponseEntity<Void> updateStatus(
+            @PathVariable Long todoId,
+            @RequestParam Status status
     ) {
-        todoWriteService.complete(todoId);
-        return ResponseEntity.ok().build();
-    }
-
-    @PatchMapping("/{todoId}/incomplete")
-    public ResponseEntity<Void> incomplete(
-            @PathVariable Long todoId
-    ) {
-        todoWriteService.incomplete(todoId);
+        todoWriteService.updateStatus(todoId, status);
         return ResponseEntity.ok().build();
     }
 
