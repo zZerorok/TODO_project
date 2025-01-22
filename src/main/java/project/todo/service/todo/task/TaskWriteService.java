@@ -37,7 +37,17 @@ public class TaskWriteService {
         task.update(request.content());
     }
 
-    public void complete(Long todoId, Long taskId) {
+    public void updateStatus(Long todoId, Long taskId, Status status) {
+        if (status == Status.COMPLETE) {
+            complete(todoId, taskId);
+        }
+
+        if (status == Status.INCOMPLETE) {
+            incomplete(todoId, taskId);
+        }
+    }
+
+    private void complete(Long todoId, Long taskId) {
         var task = getTaskWithValidation(taskId);
         task.complete();
 
@@ -47,7 +57,7 @@ public class TaskWriteService {
         }
     }
 
-    public void incomplete(Long todoId, Long taskId) {
+    private void incomplete(Long todoId, Long taskId) {
         var task = getTaskWithValidation(taskId);
         task.incomplete();
 
