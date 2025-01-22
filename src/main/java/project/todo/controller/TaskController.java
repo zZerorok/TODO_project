@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import project.todo.model.todo.Status;
 import project.todo.service.todo.task.TaskWriteService;
 import project.todo.service.todo.task.dto.TaskAddRequest;
 import project.todo.service.todo.task.dto.TaskUpdateRequest;
@@ -32,21 +33,13 @@ public class TaskController {
         return ResponseEntity.noContent().build();
     }
 
-    @PatchMapping("/{taskId}/complete")
-    public ResponseEntity<Void> complete(
+    @PatchMapping("/{taskId}/status")
+    public ResponseEntity<Void> updateStatus(
             @PathVariable Long todoId,
-            @PathVariable Long taskId
+            @PathVariable Long taskId,
+            @RequestParam Status status
     ) {
-        taskWriteService.complete(todoId, taskId);
-        return ResponseEntity.noContent().build();
-    }
-
-    @PatchMapping("/{taskId}/incomplete")
-    public ResponseEntity<Void> incomplete(
-            @PathVariable Long todoId,
-            @PathVariable Long taskId
-    ) {
-        taskWriteService.incomplete(todoId, taskId);
+        taskWriteService.updateStatus(todoId, taskId, status);
         return ResponseEntity.noContent().build();
     }
 
