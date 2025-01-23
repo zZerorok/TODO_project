@@ -26,10 +26,11 @@ public class TaskController {
 
     @PatchMapping("/{taskId}")
     public ResponseEntity<Void> update(
+            @PathVariable Long todoId,
             @PathVariable Long taskId,
             @RequestBody TaskUpdateRequest request
     ) {
-        taskWriteService.update(taskId, request);
+        taskWriteService.update(todoId, taskId, request);
         return ResponseEntity.noContent().build();
     }
 
@@ -45,9 +46,10 @@ public class TaskController {
 
     @DeleteMapping("/{taskId}")
     public ResponseEntity<Void> delete(
+            @PathVariable Long todoId,
             @PathVariable Long taskId
     ) {
-        taskWriteService.delete(taskId);
+        taskWriteService.delete(todoId, taskId);
         return ResponseEntity.noContent().build();
     }
 }
