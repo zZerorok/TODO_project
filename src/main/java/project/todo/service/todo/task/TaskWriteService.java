@@ -31,8 +31,8 @@ public class TaskWriteService {
         taskRepository.save(task);
     }
 
-    public void update(Long taskId, TaskUpdateRequest request) {
-        var task = getTaskWithValidation(taskId);
+    public void update(Long todoId, Long taskId, TaskUpdateRequest request) {
+        var task = getTaskWithValidation(todoId, taskId);
 
         task.update(request.content());
     }
@@ -48,7 +48,7 @@ public class TaskWriteService {
     }
 
     private void complete(Long todoId, Long taskId) {
-        var task = getTaskWithValidation(taskId);
+        var task = getTaskWithValidation(todoId, taskId);
         task.complete();
 
         var todo = getTodoWithValidation(todoId);
@@ -58,7 +58,7 @@ public class TaskWriteService {
     }
 
     private void incomplete(Long todoId, Long taskId) {
-        var task = getTaskWithValidation(taskId);
+        var task = getTaskWithValidation(todoId, taskId);
         task.incomplete();
 
         var todo = getTodoWithValidation(todoId);
@@ -67,8 +67,8 @@ public class TaskWriteService {
         }
     }
 
-    public void delete(Long taskId) {
-        var task = getTaskWithValidation(taskId);
+    public void delete(Long todoId, Long taskId) {
+        var task = getTaskWithValidation(todoId, taskId);
 
         taskRepository.delete(task);
     }
@@ -95,9 +95,10 @@ public class TaskWriteService {
                 .orElseThrow(() -> new EntityNotFoundException("해당 Todo를 찾을 수 없습니다."));
     }
 
-    private Task getTaskWithValidation(long taskId) {
+    private Task getTaskWithValidation(long todoId, long taskId) {
         var loginMember = getLoginMember();
         var task = getTask(taskId);
+        task.validateTodo(todoId);
         task.validateMember(loginMember.id());
         return task;
     }
