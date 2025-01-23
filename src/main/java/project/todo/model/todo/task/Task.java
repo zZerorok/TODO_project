@@ -5,6 +5,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import project.todo.exception.todo.DeadlineExceededException;
+import project.todo.exception.todo.task.TaskNotContainsInTodoException;
 import project.todo.model.todo.Status;
 import project.todo.model.todo.Todo;
 
@@ -102,5 +103,11 @@ public class Task {
 
     public void validateMember(long memberId) {
         todo.validateMember(memberId);
+    }
+
+    public void validateTodo(long todoId) {
+        if (!this.todo.getId().equals(todoId)) {
+            throw new TaskNotContainsInTodoException(todoId);
+        }
     }
 }
