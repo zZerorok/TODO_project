@@ -5,7 +5,8 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import project.todo.exception.todo.DeadlineExceededException;
-import project.todo.exception.todo.task.TaskNotContainsInTodoException;
+import project.todo.exception.todo.task.TaskNotInTodoException;
+import project.todo.exception.todo.task.TaskStateException;
 import project.todo.model.todo.Status;
 import project.todo.model.todo.Todo;
 
@@ -69,11 +70,11 @@ public class Task {
         validateContent(content);
 
         if (this.status.isCompleted()) {
-            throw new IllegalArgumentException("이미 완료된 Task는 수정할 수 없습니다.");
+            throw new TaskStateException("이미 완료된 Task는 수정할 수 없습니다.");
         }
 
         if (this.todo.getDeadline().isBefore(LocalDateTime.now())) {
-            throw new IllegalArgumentException("마감일이 초과되어 수정할 수 없습니다..");
+            throw new DeadlineExceededException("마감일이 초과되어 수정할 수 없습니다.");
         }
     }
 
@@ -81,7 +82,7 @@ public class Task {
         checkDeadline(Status.COMPLETE);
 
         if (this.status.isCompleted()) {
-            throw new IllegalStateException("이미 완료된 Task는 완료 처리할 수 없습니다.");
+            throw new TaskStateException("이미 완료된 Task는 완료 처리할 수 없습니다.");
         }
 
         this.status = Status.COMPLETE;
@@ -91,7 +92,7 @@ public class Task {
         checkDeadline(Status.INCOMPLETE);
 
         if (!this.status.isCompleted()) {
-            throw new IllegalStateException("완료되지 않은 Task는 완료 해제할 수 없습니다.");
+            throw new TaskStateException("완료되지 않은 Task는 완료 해제할 수 없습니다.");
         }
 
         this.status = Status.INCOMPLETE;
@@ -107,7 +108,7 @@ public class Task {
 
     public void validateTodo(long todoId) {
         if (!this.todo.getId().equals(todoId)) {
-            throw new TaskNotContainsInTodoException(todoId);
+            throw new TaskNotInTodoException("해당 Task는 " + todoId + "에 포함되어 있지 않습니다.");
         }
     }
 }
