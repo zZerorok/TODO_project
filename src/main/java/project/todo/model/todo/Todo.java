@@ -4,6 +4,10 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import project.todo.exception.member.MemberException;
+import project.todo.exception.todo.DeadlineExceededException;
+import project.todo.exception.todo.DeadlineException;
+import project.todo.exception.todo.TodoStateException;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -52,11 +56,11 @@ public class Todo {
 
     private void validateDeadline(LocalDateTime deadline, LocalDateTime createdAt) {
         if (deadline == null) {
-            throw new IllegalArgumentException("마감일을 설정해주세요.");
+            throw new DeadlineException("마감일을 설정해주세요.");
         }
 
         if (deadline.isBefore(createdAt)) {
-            throw new IllegalArgumentException("마감일은 현재보다 과거일 수 없습니다.");
+            throw new DeadlineExceededException("마감일은 현재보다 과거일 수 없습니다.");
         }
     }
 
@@ -74,11 +78,11 @@ public class Todo {
 
     private void validateForUpdate() {
         if (this.status.isCompleted()) {
-            throw new IllegalArgumentException("이미 완료된 Todo는 수정할 수 없습니다.");
+            throw new TodoStateException("이미 완료된 Todo는 수정할 수 없습니다.");
         }
 
         if (this.deadline.isBefore(LocalDateTime.now())) {
-            throw new IllegalArgumentException("마감일이 초과되어 수정할 수 없습니다.");
+            throw new DeadlineExceededException("마감일이 초과되어 수정할 수 없습니다.");
         }
     }
 
@@ -86,7 +90,7 @@ public class Todo {
         validateForUpdateStatus(Status.COMPLETE);
 
         if (this.status.isCompleted()) {
-            throw new IllegalStateException("이미 완료된 Todo는 완료 처리할 수 없습니다.");
+            throw new TodoStateException("이미 완료된 Todo는 완료 처리할 수 없습니다.");
         }
 
         this.status = Status.COMPLETE;
@@ -96,7 +100,7 @@ public class Todo {
         validateForUpdateStatus(Status.INCOMPLETE);
 
         if (!this.status.isCompleted()) {
-            throw new IllegalStateException("완료되지 않은 Todo는 해제할 수 없습니다.");
+            throw new TodoStateException("완료되지 않은 Todo는 해제할 수 없습니다.");
         }
 
         this.status = Status.INCOMPLETE;
@@ -104,13 +108,13 @@ public class Todo {
 
     public void validateForUpdateStatus(Status status) {
         if (this.deadline.isBefore(LocalDateTime.now())) {
-            throw new IllegalArgumentException("마감일이 초과되어 " + status.getStatus() + " 처리할 수 없습니다.");
+            throw new DeadlineExceededException("마감일이 초과되어 " + status.getStatus() + " 처리할 수 없습니다.");
         }
     }
 
     public void validateMember(long memberId) {
         if (!this.memberId.equals(memberId)) {
-            throw new IllegalArgumentException("사용자 정보가 일치하지 않습니다.");
+            throw new MemberException("사용자 정보가 일치하지 않습니다.");
         }
     }
 }
