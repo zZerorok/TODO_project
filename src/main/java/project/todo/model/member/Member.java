@@ -7,6 +7,8 @@ import jakarta.persistence.Id;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import project.todo.exception.member.LoginFailedException;
+import project.todo.exception.member.NameLengthException;
 
 import java.time.LocalDateTime;
 
@@ -41,13 +43,14 @@ public class Member {
 
     private void validateLength(String name) {
         if (MAX_LENGTH < name.length()) {
-            throw new IllegalArgumentException("이름은 10자를 초과할 수 없습니다.");
+            throw new NameLengthException("이름은 10자를 초과할 수 없습니다.");
         }
     }
 
     public void validatePassword(String password) {
         if (!this.password.equals(password)) {
-            throw new IllegalArgumentException("로그인 정보가 일치하지 않습니다.");
+
+            throw new LoginFailedException("로그인 정보가 일치하지 않습니다.");
         }
     }
 }
