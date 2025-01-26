@@ -6,6 +6,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
+import project.todo.exception.member.MemberException;
+import project.todo.exception.todo.DeadlineExceededException;
+import project.todo.exception.todo.DeadlineException;
+import project.todo.exception.todo.TodoStateException;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -68,7 +72,7 @@ class TodoTest {
                     LocalDateTime.now()
             );
         })
-                .isInstanceOf(IllegalArgumentException.class)
+                .isInstanceOf(DeadlineException.class)
                 .hasMessage("마감일을 설정해주세요.");
     }
 
@@ -83,7 +87,7 @@ class TodoTest {
                     LocalDate.of(2024, 12, 1)
             );
         })
-                .isInstanceOf(IllegalArgumentException.class)
+                .isInstanceOf(DeadlineExceededException.class)
                 .hasMessage("마감일은 현재보다 과거일 수 없습니다.");
     }
 
@@ -134,7 +138,7 @@ class TodoTest {
         assertThatThrownBy(() -> {
             todo.update("프로젝트2", LocalDate.of(2025, 1, 1));
         })
-                .isInstanceOf(IllegalArgumentException.class)
+                .isInstanceOf(TodoStateException.class)
                 .hasMessage("이미 완료된 Todo는 수정할 수 없습니다.");
     }
 
@@ -155,7 +159,7 @@ class TodoTest {
         assertThatThrownBy(() -> {
             newTodo.update("최종 프로젝트", LocalDate.of(2025, 1, 1));
         })
-                .isInstanceOf(IllegalArgumentException.class)
+                .isInstanceOf(DeadlineExceededException.class)
                 .hasMessage("마감일이 초과되어 수정할 수 없습니다.");
     }
 
@@ -187,7 +191,7 @@ class TodoTest {
         todo.complete();
 
         assertThatThrownBy(() -> todo.complete())
-                .isInstanceOf(IllegalStateException.class)
+                .isInstanceOf(TodoStateException.class)
                 .hasMessage("이미 완료된 Todo는 완료 처리할 수 없습니다.");
     }
 
@@ -207,7 +211,20 @@ class TodoTest {
     void incompleteWithIncompletedTodo() {
 
         assertThatThrownBy(() -> todo.incomplete())
-                .isInstanceOf(IllegalStateException.class)
+                .isInstanceOf(TodoStateException.class)
                 .hasMessage("완료되지 않은 Todo는 해제할 수 없습니다.");
+    }
+
+    @DisplayName("Todo 작성자가 아니면 예외 발생")
+    @Test
+    void ownerException() {
+        var todo = new Todo(
+                1L,
+                "제목",
+                LocalDate.now()
+        );
+
+        assertThatThrownBy(() -> todo.validateMember(5L))
+                .isInstanceOf(MemberException.class);
     }
 }
