@@ -2,6 +2,8 @@ package project.todo.model.member;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import project.todo.exception.member.LoginFailedException;
+import project.todo.exception.member.NameLengthException;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -34,7 +36,7 @@ class MemberTest {
                     "test@example.com"
             );
         })
-                .isInstanceOf(IllegalArgumentException.class)
+                .isInstanceOf(NameLengthException.class)
                 .hasMessage("이름은 10자를 초과할 수 없습니다.");
     }
 
@@ -49,7 +51,7 @@ class MemberTest {
         );
 
         assertThatThrownBy(() -> member.validatePassword("password"))
-                .isInstanceOf(IllegalArgumentException.class)
+                .isInstanceOf(LoginFailedException.class)
                 .hasMessage("로그인 정보가 일치하지 않습니다.");
     }
 }
