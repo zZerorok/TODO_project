@@ -7,6 +7,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
 import project.todo.exception.todo.DeadlineExceededException;
+import project.todo.exception.todo.task.TaskStateException;
 import project.todo.model.todo.Todo;
 
 import java.time.LocalDate;
@@ -80,8 +81,8 @@ public class TaskTest {
 
     @ValueSource(strings = {" ", "   "})
     @NullAndEmptySource
-    @ParameterizedTest(name = "Task 내용 수정 시 내용이 공백이면 예외 발생")
-    void updateWithEmptyContent(String input) {
+    @ParameterizedTest(name = "Task 수정 시 내용이 공백이면 예외 발생")
+    void updateTaskWithEmptyContent(String input) {
 
         assertThatThrownBy(() -> task.update(input))
                 .isInstanceOf(IllegalArgumentException.class)
@@ -94,7 +95,7 @@ public class TaskTest {
         task.complete();
 
         assertThatThrownBy(() -> task.update("new task"))
-                .isInstanceOf(IllegalArgumentException.class)
+                .isInstanceOf(TaskStateException.class)
                 .hasMessage("이미 완료된 Task는 수정할 수 없습니다.");
     }
 
@@ -114,7 +115,7 @@ public class TaskTest {
         task.complete();
 
         assertThatThrownBy(task::complete)
-                .isInstanceOf(IllegalStateException.class)
+                .isInstanceOf(TaskStateException.class)
                 .hasMessage("이미 완료된 Task는 완료 처리할 수 없습니다.");
     }
 
@@ -133,7 +134,7 @@ public class TaskTest {
     void incompleteWithIncompletedTask() {
 
         assertThatThrownBy(task::incomplete)
-                .isInstanceOf(IllegalStateException.class)
+                .isInstanceOf(TaskStateException.class)
                 .hasMessage("완료되지 않은 Task는 완료 해제할 수 없습니다.");
     }
 }
