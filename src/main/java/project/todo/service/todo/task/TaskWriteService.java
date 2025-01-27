@@ -1,11 +1,11 @@
 package project.todo.service.todo.task;
 
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.HttpClientErrorException;
+import project.todo.exception.member.MemberException;
+import project.todo.exception.todo.TodoNotFoundException;
+import project.todo.exception.todo.task.TaskNotFoundException;
 import project.todo.model.todo.Status;
 import project.todo.model.todo.Todo;
 import project.todo.model.todo.task.Task;
@@ -77,7 +77,7 @@ public class TaskWriteService {
         var loginMember = sessionHolder.getSession();
 
         if (loginMember == null) {
-            throw new HttpClientErrorException(HttpStatus.UNAUTHORIZED, "로그인이 필요합니다.");
+            throw new MemberException("로그인이 필요합니다.");
         }
 
         return loginMember;
@@ -92,7 +92,7 @@ public class TaskWriteService {
 
     private Todo getTodo(long todoId) {
         return todoRepository.findById(todoId)
-                .orElseThrow(() -> new EntityNotFoundException("해당 Todo를 찾을 수 없습니다."));
+                .orElseThrow(() -> new TodoNotFoundException("해당 Todo를 찾을 수 없습니다."));
     }
 
     private Task getTaskWithValidation(long todoId, long taskId) {
@@ -105,7 +105,7 @@ public class TaskWriteService {
 
     private Task getTask(long taskId) {
         return taskRepository.findById(taskId)
-                .orElseThrow(() -> new EntityNotFoundException("해당 Task를 찾을 수 없습니다."));
+                .orElseThrow(() -> new TaskNotFoundException("해당 Task를 찾을 수 없습니다."));
     }
 
     private boolean isAllTasksCompleted(Todo todo) {
