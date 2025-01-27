@@ -1,11 +1,10 @@
 package project.todo.service.todo;
 
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.HttpClientErrorException;
+import project.todo.exception.member.MemberException;
+import project.todo.exception.todo.TodoNotFoundException;
 import project.todo.model.todo.Status;
 import project.todo.model.todo.Todo;
 import project.todo.repository.todo.TodoRepository;
@@ -76,7 +75,7 @@ public class TodoWriteService {
         var loginMember = sessionHolder.getSession();
 
         if (loginMember == null) {
-            throw new HttpClientErrorException(HttpStatus.UNAUTHORIZED, "로그인이 필요합니다.");
+            throw new MemberException("로그인이 필요합니다.");
         }
 
         return loginMember;
@@ -91,7 +90,7 @@ public class TodoWriteService {
 
     private Todo getTodo(long todoId) {
         return todoRepository.findById(todoId)
-                .orElseThrow(() -> new EntityNotFoundException("해당 Todo가 존재하지 않습니다."));
+                .orElseThrow(() -> new TodoNotFoundException("해당 Todo가 존재하지 않습니다."));
     }
 
     private boolean isAllTasksCompleted(Todo todo) {
