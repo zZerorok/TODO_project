@@ -49,7 +49,6 @@ public class Member {
 
     public void validatePassword(String password) {
         if (!this.password.equals(password)) {
-
             throw new LoginFailedException("로그인 정보가 일치하지 않습니다.");
         }
     }
