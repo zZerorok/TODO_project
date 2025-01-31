@@ -8,12 +8,20 @@ import project.todo.repository.member.MemberRepository;
 import project.todo.service.security.LoginMember;
 import project.todo.service.security.PasswordEncrypt;
 
+/**
+ * 사용자의 로그인 요청을 처리하는 서비스 클래스
+ */
 @RequiredArgsConstructor
 @Service
 public class LoginService {
     private final MemberRepository memberRepository;
     private final PasswordEncrypt passwordEncrypt;
 
+    /**
+     * 로그인 요청을 처리하여 로그인된 사용자 정보를 반환합니다.
+     * @param request 로그인 요청 객체
+     * @return {@link LoginMember} 로그인된 요청 객체
+     */
     public LoginMember login(MemberLoginRequest request) {
         var member = getMemberByLoginId(request.loginId());
         checkPasswordMatches(member, request.password());
