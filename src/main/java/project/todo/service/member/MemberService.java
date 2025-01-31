@@ -13,18 +13,24 @@ public class MemberService {
     private final PasswordEncrypt passwordEncrypt;
 
     public void register(MemberCreateRequest request) {
-        if (memberRepository.existsByLoginId(request.loginId())) {
-            throw new IllegalStateException("이미 존재하는 아이디 입니다.");
-        }
-
-        var hashedPassword = passwordEncrypt.toHash(request.password());
+        checkDuplicateLoginId(request.loginId());
         var member = new Member(
                 request.name(),
                 request.loginId(),
-                hashedPassword,
+                encryptPassword(request.password()),
                 request.email()
         );
 
         memberRepository.save(member);
+    }
+
+    private void checkDuplicateLoginId(String loginId) {
+        if (memberRepository.existsByLoginId(loginId)) {
+            throw new IllegalStateException("이미 존재하는 아이디 입니다.");
+        }
+    }
+
+    private String encryptPassword(String rawPassword) {
+        return passwordEncrypt.toHash(rawPassword);
     }
 }
