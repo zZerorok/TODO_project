@@ -16,6 +16,9 @@ import project.todo.service.security.SessionHolder;
 import project.todo.service.todo.task.dto.TaskAddRequest;
 import project.todo.service.todo.task.dto.TaskUpdateRequest;
 
+/**
+ * Task 쓰기 작업 요청을 처리하는 서비스 클래스
+ */
 @RequiredArgsConstructor
 @Transactional
 @Service
@@ -24,6 +27,12 @@ public class TaskWriteService {
     private final TodoRepository todoRepository;
     private final SessionHolder sessionHolder;
 
+    /**
+     * 특정 Todo에 새로운 Task를 추가합니다.
+     *
+     * @param todoId Task를 추가할 Todo의 ID
+     * @param request Task 추가 요청 객체
+     */
     public void add(Long todoId, TaskAddRequest request) {
         var todo = getTodoWithValidation(todoId);
         var task = new Task(todo, request.content());
@@ -31,12 +40,29 @@ public class TaskWriteService {
         taskRepository.save(task);
     }
 
+    /**
+     * 특정 Todo에 포함된 Task를 수정합니다.
+     *
+     * @param todoId 해당 Task가 속한 Todo의 ID
+     * @param taskId 수정할 Task의 ID
+     * @param request Task 수정 요청 객체
+     */
     public void update(Long todoId, Long taskId, TaskUpdateRequest request) {
         var task = getTaskWithValidation(todoId, taskId);
 
         task.update(request.content());
     }
 
+    /**
+     * 요청 상태에 따라 Task의 완료/미완료 처리를 진행합니다.<p>
+     *
+     * - Task를 완료한 경우, 해당 Task가 속한 Todo의 모든 Task가 완료되면 Todo도 자동 완료 처리됩니다.<p>
+     * - Task를 미완료 처리한 경우, Todo가 이미 완료 상태라면 Todo도 미완료 처리됩니다.<p>
+     *
+     * @param todoId 해당 Task가 속한 Todo의 ID
+     * @param taskId 완료/미완료 처리를 진행할 Task의 ID
+     * @param status Task의 상태 (완료 또는 미완료)
+     */
     public void updateStatus(Long todoId, Long taskId, Status status) {
         if (status == Status.COMPLETE) {
             complete(todoId, taskId);
@@ -47,26 +73,12 @@ public class TaskWriteService {
         }
     }
 
-    private void complete(Long todoId, Long taskId) {
-        var task = getTaskWithValidation(todoId, taskId);
-        task.complete();
-
-        var todo = getTodoWithValidation(todoId);
-        if (isAllTasksCompleted(todo)) {
-            todo.complete();
-        }
-    }
-
-    private void incomplete(Long todoId, Long taskId) {
-        var task = getTaskWithValidation(todoId, taskId);
-        task.incomplete();
-
-        var todo = getTodoWithValidation(todoId);
-        if (isCompleted(todo)) {
-            todo.incomplete();
-        }
-    }
-
+    /**
+     * 특정 Task를 삭제합니다.
+     *
+     * @param todoId 해당 Task가 속한 Todo의 ID
+     * @param taskId 삭제할 Task의 ID
+     */
     public void delete(Long todoId, Long taskId) {
         var task = getTaskWithValidation(todoId, taskId);
 
@@ -106,6 +118,26 @@ public class TaskWriteService {
     private Task getTask(long taskId) {
         return taskRepository.findById(taskId)
                 .orElseThrow(() -> new TaskNotFoundException("해당 Task를 찾을 수 없습니다."));
+    }
+
+    private void complete(Long todoId, Long taskId) {
+        var task = getTaskWithValidation(todoId, taskId);
+        task.complete();
+
+        var todo = getTodoWithValidation(todoId);
+        if (isAllTasksCompleted(todo)) {
+            todo.complete();
+        }
+    }
+
+    private void incomplete(Long todoId, Long taskId) {
+        var task = getTaskWithValidation(todoId, taskId);
+        task.incomplete();
+
+        var todo = getTodoWithValidation(todoId);
+        if (isCompleted(todo)) {
+            todo.incomplete();
+        }
     }
 
     private boolean isAllTasksCompleted(Todo todo) {
