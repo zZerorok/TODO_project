@@ -18,6 +18,9 @@ import project.todo.service.todo.dto.TodoWithTasksResponse;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Todo 읽기 작업 요청을 처리하는 서비스 클래스
+ */
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 @Service
@@ -26,6 +29,15 @@ public class TodoReadService {
     private final TaskRepository taskRepository;
     private final SessionHolder sessionHolder;
 
+    /**
+     * 요청 상태에 따라 Todo 목록을 조회합니다.<p>
+     *
+     * - 상태값이 주어지지 않으면 전체 Todo를 반환합니다.<p>
+     * - 상태값이 존재하면 해당 상태(완료 또는 미완료)에 해당하는 Todo만 필터링하여 반환합니다.<p>
+     *
+     * @param status Todo의 상태 (완료 또는 미완료)
+     * @return {@link List<TodoResponse>} Todo 목록 객체
+     */
     public List<TodoResponse> findTodos(Optional<Status> status) {
         var loginMember = getLoginMember();
         var todos = getTodos(loginMember);
@@ -38,6 +50,12 @@ public class TodoReadService {
         return toResponse(todosByStatus);
     }
 
+    /**
+     * 특정 Todo와 해당 Todo에 포함된 모든 Task를 조회합니다.
+     *
+     * @param todoId - 조회를 요청한 Todo의 ID
+     * @return {@link TodoWithTasksResponse} 특정 Todo와 포함된 전체 Task 포함한 객체
+     */
     public TodoWithTasksResponse getTodoWithTasks(Long todoId) {
         var loginMember = getLoginMember();
         var todo = getTodoWithValidation(loginMember, todoId);
