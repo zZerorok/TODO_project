@@ -37,6 +37,7 @@ public class Task {
     public Task(Todo todo, String content, LocalDateTime createdAt) {
         validateForCreate(todo, content, createdAt);
 
+        this.id = 0L;
         this.todo = todo;
         this.content = content;
         this.createdAt = createdAt;

@@ -36,6 +36,7 @@ public class Todo {
     public Todo(Long memberId, String title, LocalDateTime deadline, LocalDateTime createdAt) {
         validateForCreate(title, deadline, createdAt);
 
+        this.id = 0L;
         this.memberId = memberId;
         this.title = title;
         this.deadline = deadline;
