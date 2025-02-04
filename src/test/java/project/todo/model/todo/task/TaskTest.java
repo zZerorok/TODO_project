@@ -7,6 +7,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
 import project.todo.exception.todo.DeadlineExceededException;
+import project.todo.exception.todo.task.TaskNotInTodoException;
 import project.todo.exception.todo.task.TaskStateException;
 import project.todo.model.todo.Todo;
 
@@ -136,5 +137,13 @@ public class TaskTest {
         assertThatThrownBy(task::incomplete)
                 .isInstanceOf(TaskStateException.class)
                 .hasMessage("완료되지 않은 Task는 완료 해제할 수 없습니다.");
+    }
+
+    @DisplayName("Task가 Todo에 포함되어 있지 않으면 예외 발생")
+    @Test
+    void notContainsInTodo() {
+
+        assertThatThrownBy(() -> task.validateTodo(999L))
+                .isInstanceOf(TaskNotInTodoException.class);
     }
 }
