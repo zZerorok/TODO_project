@@ -1,4 +1,4 @@
-package project.todo.service.member;
+package project.todo.service.member.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
