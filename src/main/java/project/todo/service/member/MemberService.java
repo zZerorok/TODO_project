@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import project.todo.model.member.Member;
 import project.todo.repository.member.MemberRepository;
+import project.todo.service.member.dto.MemberCreateRequest;
 import project.todo.service.security.PasswordEncrypt;
 
 /**

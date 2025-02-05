@@ -11,9 +11,9 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import project.todo.service.member.LoginService;
-import project.todo.service.member.MemberCreateRequest;
-import project.todo.service.member.MemberLoginRequest;
 import project.todo.service.member.MemberService;
+import project.todo.service.member.dto.MemberCreateRequest;
+import project.todo.service.member.dto.MemberLoginRequest;
 import project.todo.service.security.SessionHolder;
 
 @Slf4j

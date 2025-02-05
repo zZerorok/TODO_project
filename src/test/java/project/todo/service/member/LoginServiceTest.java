@@ -9,6 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import project.todo.exception.member.LoginFailedException;
 import project.todo.model.member.Member;
 import project.todo.repository.member.MemberRepository;
+import project.todo.service.member.dto.MemberLoginRequest;
 import project.todo.service.security.PasswordEncrypt;
 
 import static org.assertj.core.api.Assertions.assertThat;
