@@ -10,7 +10,7 @@ import project.todo.model.todo.Todo;
 import project.todo.model.todo.task.Task;
 import project.todo.repository.todo.TodoRepository;
 import project.todo.repository.todo.task.TaskRepository;
-import project.todo.service.security.LoginMember;
+import project.todo.service.security.dto.LoginMember;
 import project.todo.service.security.SessionHolder;
 import project.todo.service.todo.dto.TodoResponse;
 import project.todo.service.todo.dto.TodoWithTasksResponse;

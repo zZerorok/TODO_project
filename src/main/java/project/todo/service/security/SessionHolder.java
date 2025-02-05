@@ -1,5 +1,7 @@
 package project.todo.service.security;
 
+import project.todo.service.security.dto.LoginMember;
+
 /**
  * 사용자 세션을 관리하는 컴포넌트
  */
