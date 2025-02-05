@@ -1,4 +1,4 @@
-package project.todo.service.security;
+package project.todo.service.security.dto;
 
 import project.todo.model.member.Member;
 
