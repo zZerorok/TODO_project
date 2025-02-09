@@ -21,7 +21,7 @@ public class Todo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long memberId;
+    private Long writerId;
     private String title;
     private LocalDateTime deadline;
     private LocalDateTime createdAt;
@@ -29,15 +29,15 @@ public class Todo {
     @Enumerated(EnumType.STRING)
     private Status status;
 
-    public Todo(Long memberId, String title, LocalDate deadline) {
-        this(memberId, title, deadline.atTime(LocalTime.MAX), LocalDateTime.now());
+    public Todo(Long writerId, String title, LocalDate deadline) {
+        this(writerId, title, deadline.atTime(LocalTime.MAX), LocalDateTime.now());
     }
 
-    public Todo(Long memberId, String title, LocalDateTime deadline, LocalDateTime createdAt) {
+    public Todo(Long writerId, String title, LocalDateTime deadline, LocalDateTime createdAt) {
         validateForCreate(title, deadline, createdAt);
 
         this.id = 0L;
-        this.memberId = memberId;
+        this.writerId = writerId;
         this.title = title;
         this.deadline = deadline;
         this.createdAt = createdAt;
@@ -113,9 +113,9 @@ public class Todo {
         }
     }
 
-    public void validateMember(long memberId) {
-        if (!this.memberId.equals(memberId)) {
-            throw new MemberException("사용자 정보가 일치하지 않습니다.");
+    public void validateWriter(long memberId) {
+        if (!this.writerId.equals(memberId)) {
+            throw new MemberException("작성자 정보가 일치하지 않습니다.");
         }
     }
 }
