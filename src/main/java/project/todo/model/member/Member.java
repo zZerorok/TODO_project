@@ -34,6 +34,7 @@ public class Member {
     public Member(String name, String loginId, String password, String email, LocalDateTime createdAt) {
         validateLength(name);
 
+        this.id = 0L;
         this.name = name;
         this.loginId = loginId;
         this.password = password;
