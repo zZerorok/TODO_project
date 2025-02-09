@@ -97,7 +97,7 @@ public class TodoWriteService {
     private Todo getTodoWithValidation(long todoId) {
         var loginMember = getLoginMember();
         var todo = getTodo(todoId);
-        todo.validateMember(loginMember.id());
+        todo.validateWriter(loginMember.id());
         return todo;
     }
 

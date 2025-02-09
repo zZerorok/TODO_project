@@ -224,7 +224,7 @@ class TodoTest {
                 LocalDate.now()
         );
 
-        assertThatThrownBy(() -> todo.validateMember(5L))
+        assertThatThrownBy(() -> todo.validateWriter(5L))
                 .isInstanceOf(MemberException.class);
     }
 }

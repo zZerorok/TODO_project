@@ -92,7 +92,7 @@ public class TodoReadService {
 
     private Todo getTodoWithValidation(LoginMember loginMember, long todoId) {
         var todo = getTodo(todoId);
-        todo.validateMember(loginMember.id());
+        todo.validateWriter(loginMember.id());
         return todo;
     }
 
