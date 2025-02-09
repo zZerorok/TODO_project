@@ -103,8 +103,8 @@ public class Task {
         todo.validateForUpdateStatus(status);
     }
 
-    public void validateMember(long memberId) {
-        todo.validateMember(memberId);
+    public void validateWriter(long memberId) {
+        todo.validateWriter(memberId);
     }
 
     public void validateTodo(long todoId) {

@@ -98,7 +98,7 @@ public class TaskWriteService {
     private Todo getTodoWithValidation(long todoId) {
         var loginMember = getLoginMember();
         var todo = getTodo(todoId);
-        todo.validateMember(loginMember.id());
+        todo.validateWriter(loginMember.id());
         return todo;
     }
 
@@ -111,7 +111,7 @@ public class TaskWriteService {
         var loginMember = getLoginMember();
         var task = getTask(taskId);
         task.validateTodo(todoId);
-        task.validateMember(loginMember.id());
+        task.validateWriter(loginMember.id());
         return task;
     }
 
