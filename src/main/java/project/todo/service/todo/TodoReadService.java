@@ -75,7 +75,7 @@ public class TodoReadService {
     }
 
     private List<Todo> getTodos(LoginMember loginMember) {
-        return todoRepository.findAllByMemberId(loginMember.id());
+        return todoRepository.findAllByWriterId(loginMember.id());
     }
 
     private List<Todo> filterByStatus(List<Todo> todos, Status status) {
