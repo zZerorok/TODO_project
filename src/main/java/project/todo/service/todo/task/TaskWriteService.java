@@ -3,7 +3,6 @@ package project.todo.service.todo.task;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import project.todo.exception.member.MemberException;
 import project.todo.exception.todo.TodoNotFoundException;
 import project.todo.exception.todo.task.TaskNotFoundException;
 import project.todo.model.todo.Status;
@@ -12,7 +11,6 @@ import project.todo.model.todo.task.Task;
 import project.todo.repository.todo.TodoRepository;
 import project.todo.repository.todo.task.TaskRepository;
 import project.todo.service.security.dto.LoginMember;
-import project.todo.service.security.SessionHolder;
 import project.todo.service.todo.task.dto.TaskAddRequest;
 import project.todo.service.todo.task.dto.TaskUpdateRequest;
 
@@ -25,7 +23,6 @@ import project.todo.service.todo.task.dto.TaskUpdateRequest;
 public class TaskWriteService {
     private final TaskRepository taskRepository;
     private final TodoRepository todoRepository;
-    private final SessionHolder sessionHolder;
 
     /**
      * 특정 Todo에 새로운 Task를 추가합니다.
@@ -33,8 +30,8 @@ public class TaskWriteService {
      * @param todoId Task를 추가할 Todo의 ID
      * @param request Task 추가 요청 객체
      */
-    public void add(Long todoId, TaskAddRequest request) {
-        var todo = getTodoWithValidation(todoId);
+    public void add(LoginMember loginMember, Long todoId, TaskAddRequest request) {
+        var todo = getTodoWithValidation(loginMember, todoId);
         var task = new Task(todo, request.content());
 
         taskRepository.save(task);
@@ -47,8 +44,8 @@ public class TaskWriteService {
      * @param taskId 수정할 Task의 ID
      * @param request Task 수정 요청 객체
      */
-    public void update(Long todoId, Long taskId, TaskUpdateRequest request) {
-        var task = getTaskWithValidation(todoId, taskId);
+    public void update(LoginMember loginMember, Long todoId, Long taskId, TaskUpdateRequest request) {
+        var task = getTaskWithValidation(loginMember, todoId, taskId);
 
         task.update(request.content());
     }
@@ -63,13 +60,13 @@ public class TaskWriteService {
      * @param taskId 완료/미완료 처리를 진행할 Task의 ID
      * @param status Task의 상태 (완료 또는 미완료)
      */
-    public void updateStatus(Long todoId, Long taskId, Status status) {
+    public void updateStatus(LoginMember loginMember, Long todoId, Long taskId, Status status) {
         if (status == Status.COMPLETE) {
-            complete(todoId, taskId);
+            complete(loginMember, todoId, taskId);
         }
 
         if (status == Status.INCOMPLETE) {
-            incomplete(todoId, taskId);
+            incomplete(loginMember, todoId, taskId);
         }
     }
 
@@ -79,24 +76,13 @@ public class TaskWriteService {
      * @param todoId 해당 Task가 속한 Todo의 ID
      * @param taskId 삭제할 Task의 ID
      */
-    public void delete(Long todoId, Long taskId) {
-        var task = getTaskWithValidation(todoId, taskId);
+    public void delete(LoginMember loginMember, Long todoId, Long taskId) {
+        var task = getTaskWithValidation(loginMember, todoId, taskId);
 
         taskRepository.delete(task);
     }
 
-    private LoginMember getLoginMember() {
-        var loginMember = sessionHolder.getSession();
-
-        if (loginMember == null) {
-            throw new MemberException("로그인이 필요합니다.");
-        }
-
-        return loginMember;
-    }
-
-    private Todo getTodoWithValidation(long todoId) {
-        var loginMember = getLoginMember();
+    private Todo getTodoWithValidation(LoginMember loginMember, long todoId) {
         var todo = getTodo(todoId);
         todo.validateWriter(loginMember.id());
         return todo;
@@ -107,11 +93,10 @@ public class TaskWriteService {
                 .orElseThrow(() -> new TodoNotFoundException("해당 Todo를 찾을 수 없습니다."));
     }
 
-    private Task getTaskWithValidation(long todoId, long taskId) {
-        var loginMember = getLoginMember();
+    private Task getTaskWithValidation(LoginMember loginMember, long todoId, long taskId) {
         var task = getTask(taskId);
-        task.validateTodo(todoId);
         task.validateWriter(loginMember.id());
+        task.validateTodo(todoId);
         return task;
     }
 
@@ -120,21 +105,21 @@ public class TaskWriteService {
                 .orElseThrow(() -> new TaskNotFoundException("해당 Task를 찾을 수 없습니다."));
     }
 
-    private void complete(Long todoId, Long taskId) {
-        var task = getTaskWithValidation(todoId, taskId);
+    private void complete(LoginMember loginMember, Long todoId, Long taskId) {
+        var task = getTaskWithValidation(loginMember, todoId, taskId);
         task.complete();
 
-        var todo = getTodoWithValidation(todoId);
+        var todo = getTodoWithValidation(loginMember, todoId);
         if (isAllTasksCompleted(todo)) {
             todo.complete();
         }
     }
 
-    private void incomplete(Long todoId, Long taskId) {
-        var task = getTaskWithValidation(todoId, taskId);
+    private void incomplete(LoginMember loginMember, Long todoId, Long taskId) {
+        var task = getTaskWithValidation(loginMember, todoId, taskId);
         task.incomplete();
 
-        var todo = getTodoWithValidation(todoId);
+        var todo = getTodoWithValidation(loginMember, todoId);
         if (isCompleted(todo)) {
             todo.incomplete();
         }
