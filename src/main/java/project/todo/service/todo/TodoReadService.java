@@ -3,7 +3,6 @@ package project.todo.service.todo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import project.todo.exception.member.MemberException;
 import project.todo.exception.todo.TodoNotFoundException;
 import project.todo.model.todo.Status;
 import project.todo.model.todo.Todo;
@@ -11,7 +10,6 @@ import project.todo.model.todo.task.Task;
 import project.todo.repository.todo.TodoRepository;
 import project.todo.repository.todo.task.TaskRepository;
 import project.todo.service.security.dto.LoginMember;
-import project.todo.service.security.SessionHolder;
 import project.todo.service.todo.dto.TodoResponse;
 import project.todo.service.todo.dto.TodoWithTasksResponse;
 
@@ -27,7 +25,6 @@ import java.util.Optional;
 public class TodoReadService {
     private final TodoRepository todoRepository;
     private final TaskRepository taskRepository;
-    private final SessionHolder sessionHolder;
 
     /**
      * 요청 상태에 따라 Todo 목록을 조회합니다.<p>
@@ -38,8 +35,7 @@ public class TodoReadService {
      * @param status Todo의 상태 (완료 또는 미완료)
      * @return {@link List<TodoResponse>} Todo 목록 객체
      */
-    public List<TodoResponse> findTodos(Optional<Status> status) {
-        var loginMember = getLoginMember();
+    public List<TodoResponse> findTodos(LoginMember loginMember, Optional<Status> status) {
         var todos = getTodos(loginMember);
 
         if (status.isEmpty()) {
@@ -56,22 +52,11 @@ public class TodoReadService {
      * @param todoId - 조회를 요청한 Todo의 ID
      * @return {@link TodoWithTasksResponse} 특정 Todo와 포함된 전체 Task 포함한 객체
      */
-    public TodoWithTasksResponse getTodoWithTasks(Long todoId) {
-        var loginMember = getLoginMember();
+    public TodoWithTasksResponse getTodoWithTasks(LoginMember loginMember, Long todoId) {
         var todo = getTodoWithValidation(loginMember, todoId);
         var tasks = getTasks(todo);
 
         return TodoWithTasksResponse.from(todo, tasks);
-    }
-
-    private LoginMember getLoginMember() {
-        var loginMember = sessionHolder.getSession();
-
-        if (loginMember == null) {
-            throw new MemberException("로그인이 필요합니다.");
-        }
-
-        return loginMember;
     }
 
     private List<Todo> getTodos(LoginMember loginMember) {

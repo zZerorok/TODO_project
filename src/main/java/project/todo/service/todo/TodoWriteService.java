@@ -3,14 +3,12 @@ package project.todo.service.todo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import project.todo.exception.member.MemberException;
 import project.todo.exception.todo.TodoNotFoundException;
 import project.todo.model.todo.Status;
 import project.todo.model.todo.Todo;
 import project.todo.repository.todo.TodoRepository;
 import project.todo.repository.todo.task.TaskRepository;
 import project.todo.service.security.dto.LoginMember;
-import project.todo.service.security.SessionHolder;
 import project.todo.service.todo.dto.TodoCreateRequest;
 import project.todo.service.todo.dto.TodoUpdateRequest;
 
@@ -23,15 +21,13 @@ import project.todo.service.todo.dto.TodoUpdateRequest;
 public class TodoWriteService {
     private final TodoRepository todoRepository;
     private final TaskRepository taskRepository;
-    private final SessionHolder sessionHolder;
 
     /**
      * 새로운 Todo를 생성합니다.
      *
      * @param request Todo 생성 요청 객체
      */
-    public void create(TodoCreateRequest request) {
-        var loginMember = getLoginMember();
+    public void create(LoginMember loginMember, TodoCreateRequest request) {
         var todo = new Todo(
                 loginMember.id(),
                 request.title(),
@@ -47,8 +43,8 @@ public class TodoWriteService {
      * @param todoId 수정할 Todo의 ID
      * @param request Todo 수정 요청 객체
      */
-    public void update(Long todoId, TodoUpdateRequest request) {
-        var todo = getTodoWithValidation(todoId);
+    public void update(LoginMember loginMember, Long todoId, TodoUpdateRequest request) {
+        var todo = getTodoWithValidation(loginMember, todoId);
 
         todo.update(request.title(), request.deadline());
     }
@@ -62,13 +58,13 @@ public class TodoWriteService {
      * @param todoId
      * @param status 변경할 요청의 상태(완료 또는 미완료)
      */
-    public void updateStatus(Long todoId, Status status) {
+    public void updateStatus(LoginMember loginMember, Long todoId, Status status) {
         if (status == Status.COMPLETE) {
-            complete(todoId);
+            complete(loginMember, todoId);
         }
 
         if (status == Status.INCOMPLETE) {
-            incomplete(todoId);
+            incomplete(loginMember, todoId);
         }
     }
 
@@ -77,25 +73,15 @@ public class TodoWriteService {
      *
      * @param todoId 삭제할 Todo의 ID
      */
-    public void delete(Long todoId) {
-        var todo = getTodoWithValidation(todoId);
+    public void delete(LoginMember loginMember, Long todoId) {
+        var todo = getTodoWithValidation(loginMember, todoId);
 
         taskRepository.deleteAllByTodoId(todo.getId());
         todoRepository.delete(todo);
     }
 
-    private LoginMember getLoginMember() {
-        var loginMember = sessionHolder.getSession();
 
-        if (loginMember == null) {
-            throw new MemberException("로그인이 필요합니다.");
-        }
-
-        return loginMember;
-    }
-
-    private Todo getTodoWithValidation(long todoId) {
-        var loginMember = getLoginMember();
+    private Todo getTodoWithValidation(LoginMember loginMember, long todoId) {
         var todo = getTodo(todoId);
         todo.validateWriter(loginMember.id());
         return todo;
@@ -106,16 +92,16 @@ public class TodoWriteService {
                 .orElseThrow(() -> new TodoNotFoundException("해당 Todo가 존재하지 않습니다."));
     }
 
-    private void complete(Long todoId) {
-        var todo = getTodoWithValidation(todoId);
+    private void complete(LoginMember loginMember, Long todoId) {
+        var todo = getTodoWithValidation(loginMember, todoId);
 
         if (isAllTasksCompleted(todo)) {
             todo.complete();
         }
     }
 
-    private void incomplete(Long todoId) {
-        var todo = getTodoWithValidation(todoId);
+    private void incomplete(LoginMember loginMember, Long todoId) {
+        var todo = getTodoWithValidation(loginMember, todoId);
 
         todo.incomplete();
     }
