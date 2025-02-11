@@ -78,8 +78,12 @@ public class TaskWriteService {
      */
     public void delete(LoginMember loginMember, Long todoId, Long taskId) {
         var task = getTaskWithValidation(loginMember, todoId, taskId);
-
         taskRepository.delete(task);
+
+        var todo = getTodo(todoId);
+        if (isLastTask(todo) && isCompleted(todo)) {
+            todo.incomplete();
+        }
     }
 
     private Todo getTodoWithValidation(LoginMember loginMember, long todoId) {
@@ -131,5 +135,9 @@ public class TaskWriteService {
 
     private boolean isCompleted(Todo todo) {
         return todo.getStatus().isCompleted();
+    }
+
+    private boolean isLastTask(Todo todo) {
+        return !taskRepository.existsByTodo(todo);
     }
 }
