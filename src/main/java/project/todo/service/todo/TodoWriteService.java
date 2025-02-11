@@ -76,8 +76,7 @@ public class TodoWriteService {
     public void delete(LoginMember loginMember, Long todoId) {
         var todo = getTodoWithValidation(loginMember, todoId);
 
-        taskRepository.deleteAllByTodoId(todo.getId());
-        todoRepository.delete(todo);
+        deleteTodoAndTasks(todo);
     }
 
 
@@ -108,5 +107,18 @@ public class TodoWriteService {
 
     private boolean isAllTasksCompleted(Todo todo) {
         return !taskRepository.existsByTodoAndStatus(todo, Status.INCOMPLETE);
+    }
+
+    private void deleteTodoAndTasks(Todo todo) {
+        deleteTasksFromTodo(todo);
+        deleteTodo(todo);
+    }
+
+    private void deleteTasksFromTodo(Todo todo) {
+        taskRepository.deleteAllByTodoId(todo.getId());
+    }
+
+    private void deleteTodo(Todo todo) {
+        todoRepository.delete(todo);
     }
 }
